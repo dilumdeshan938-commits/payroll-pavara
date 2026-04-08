@@ -7,7 +7,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Chart.js for Dashboard Bar Chart -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Sinhala:wght@400;600;700&display=swap');
@@ -41,17 +40,22 @@ body{font-family:'Inter','Noto Sans Sinhala',sans-serif;background:var(--bg-prim
 .emp-type-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
 .emp-type-badge.permanent{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3);}
 .emp-type-badge.casual{background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.3);}
-#auth-screen{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;z-index:10000;}
-.login-container{width:420px;padding:50px;text-align:center;background:rgba(255,255,255,.14);backdrop-filter:blur(32px) saturate(200%);-webkit-backdrop-filter:blur(32px) saturate(200%);border-radius:28px;border:1px solid rgba(255,255,255,.4);box-shadow:0 2px 0 rgba(255,255,255,.5) inset,0 32px 80px rgba(0,0,0,.28);color:var(--text-primary);}
-[data-theme="dark"] .login-container{background:rgba(15,23,60,.55);border-color:rgba(96,165,250,.22);}
+
+/* ── Login Screen with Ship Background ── */
+#auth-screen{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;z-index:10000;overflow:hidden;}
+#auth-screen::before{content:'';position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1493946740644-2d8a1f1a6aff?auto=format&fit=crop&w=1920&q=80');background-size:cover;background-position:center 60%;z-index:0;}
+#auth-screen::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(5,10,30,.82) 0%,rgba(10,22,50,.78) 50%,rgba(5,15,40,.88) 100%);backdrop-filter:blur(2px);z-index:1;}
+.login-container{position:relative;z-index:2;width:420px;padding:50px;text-align:center;background:rgba(255,255,255,.1);backdrop-filter:blur(32px) saturate(200%);-webkit-backdrop-filter:blur(32px) saturate(200%);border-radius:28px;border:1px solid rgba(255,255,255,.25);box-shadow:0 2px 0 rgba(255,255,255,.25) inset,0 32px 80px rgba(0,0,0,.55);color:#e2e8f0;}
+[data-theme="light"] #auth-screen::after{background:linear-gradient(135deg,rgba(15,30,60,.75) 0%,rgba(20,40,80,.72) 50%,rgba(10,25,55,.82) 100%);}
+[data-theme="light"] .login-container{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35);}
+
 .company-logo{width:110px;height:110px;background:linear-gradient(135deg,var(--blue-deep),var(--blue),var(--blue-bright));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 25px;box-shadow:0 0 0 3px rgba(255,255,255,.15),0 0 40px var(--blue-glow);}
 .company-logo svg{width:70px;height:70px;}
-.login-title{font-size:28px;font-weight:800;margin-bottom:5px;}
+.login-title{font-size:28px;font-weight:800;margin-bottom:5px;color:#f1f5f9;}
 .login-subtitle{color:var(--blue-bright);font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:30px;}
 .input-group{margin-bottom:18px;}
-.input-group input{width:100%;padding:15px 20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);border-radius:14px;color:var(--input-text)!important;font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color .25s,box-shadow .25s;}
-[data-theme="dark"] .input-group input{background:rgba(15,30,60,.5);border-color:rgba(96,165,250,.18);}
-.input-group input::placeholder{color:var(--text-secondary);opacity:.8;}
+.input-group input{width:100%;padding:15px 20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);border-radius:14px;color:#f1f5f9!important;font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color .25s,box-shadow .25s;}
+.input-group input::placeholder{color:rgba(226,232,240,.55);opacity:1;}
 .input-group input:focus{border-color:var(--blue-bright);box-shadow:0 0 0 3px rgba(59,130,246,.18);}
 .form-group input,.form-group select{width:100%;padding:12px 14px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:10px;color:var(--input-text)!important;font-size:15px;font-weight:500;font-family:'Inter',sans-serif;outline:none;transition:border-color .25s,box-shadow .25s;appearance:none;-webkit-appearance:none;}
 .form-group input:focus,.form-group select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.15);}
@@ -187,6 +191,8 @@ input:checked+.slider:before{transform:translateX(24px);}
 .stat-card.accent-green .stat-value{color:#10b981;}
 .stat-card.accent-amber  .stat-value{color:#f59e0b;}
 .stat-card.accent-purple .stat-value{color:#a78bfa;}
+.stat-card.accent-red    .stat-value{color:#ef4444;}
+.stat-card.accent-cyan   .stat-value{color:#06b6d4;}
 
 /* ── Dashboard Bar Chart card ── */
 .dashboard-chart-card{padding:22px 24px;margin-bottom:20px;}
@@ -281,6 +287,23 @@ input:checked+.slider:before{transform:translateX(24px);}
 .master-row-item:hover{background:rgba(59,130,246,.04);}
 .master-row-item div{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .master-header-row{display:grid;grid-template-columns:1fr 0.6fr 0.7fr 0.7fr 0.6fr 0.9fr 0.9fr 0.6fr 0.7fr 0.75fr 80px;gap:5px;padding:11px 16px;background:rgba(59,130,246,.06);font-weight:700;font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--glass-border);}
+
+/* ── Master Allowances Panel ── */
+.master-allowances-panel{
+  background:rgba(59,130,246,.04);
+  border:1px solid rgba(59,130,246,.15);
+  border-radius:10px;
+  padding:14px 16px;
+  margin-top:14px;
+  margin-bottom:6px;
+}
+.master-allowances-panel .panel-title{
+  font-size:12px;font-weight:700;color:var(--blue-bright);
+  text-transform:uppercase;letter-spacing:.07em;
+  margin-bottom:10px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+
 .results-table-container{margin-top:15px;border:1px solid var(--glass-border);border-radius:14px;overflow:hidden;}
 .results-row{display:grid;grid-template-columns:50px 0.7fr 1fr 1fr 1fr 1fr 0.8fr 90px;gap:10px;padding:13px 16px;border-bottom:1px solid var(--glass-border);align-items:center;transition:background .15s;}
 .results-row:last-child{border-bottom:none;}
@@ -288,6 +311,32 @@ input:checked+.slider:before{transform:translateX(24px);}
 .results-header{display:grid;grid-template-columns:50px 0.7fr 1fr 1fr 1fr 1fr 0.8fr 90px;gap:10px;padding:11px 16px;background:rgba(59,130,246,.06);font-weight:700;font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--glass-border);}
 .results-row div{font-size:14px;}
 .results-row input[type="checkbox"]{width:18px;height:18px;cursor:pointer;accent-color:var(--blue);}
+
+/* ── Net / Advance / Grand Total summary bar in Final Results ── */
+.results-summary-bar{
+  display:flex;gap:12px;flex-wrap:wrap;
+  padding:14px 18px;
+  margin-bottom:12px;
+  background:var(--glass-bg);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--glass-border);
+  border-radius:12px;
+}
+.results-summary-item{
+  display:flex;flex-direction:column;align-items:center;
+  flex:1;min-width:130px;
+  padding:10px 14px;
+  border-radius:10px;
+}
+.results-summary-item.net   {background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);}
+.results-summary-item.adv   {background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.results-summary-item.grand {background:rgba(59,130,246,.10);border:1px solid rgba(59,130,246,.25);}
+.results-summary-val{font-size:20px;font-weight:800;margin-bottom:3px;}
+.results-summary-item.net   .results-summary-val{color:#10b981;}
+.results-summary-item.adv   .results-summary-val{color:#f59e0b;}
+.results-summary-item.grand .results-summary-val{color:var(--blue-bright);}
+.results-summary-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-secondary);}
+
 .nav-welcome{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;background:rgba(59,130,246,.14);border:1px solid rgba(59,130,246,.3);border-radius:20px;font-size:12px;font-weight:600;color:var(--blue-bright);white-space:nowrap;}
 .nav-welcome::before{content:'👤';font-size:13px;}
 .user-form-row{display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;}
@@ -317,37 +366,73 @@ input:checked+.slider:before{transform:translateX(24px);}
 <div class="port-bg">
   <div class="bg-gradient"></div><div class="stars"></div><div class="water"></div>
   <div class="ship">
-    <div class="container-row"><div class="container-box c-red"></div><div class="container-box c-blue"></div><div class="container-box c-yellow"></div></div>
+    <div class="container-row">
+      <div class="container-box c-red"></div>
+      <div class="container-box c-blue"></div>
+      <div class="container-box c-yellow"></div>
+    </div>
     <div class="ship-hull"></div>
   </div>
 </div>
 
+<!-- ══════════════════════════════ LOGIN SCREEN ══════════════════════════════ -->
 <div id="auth-screen" style="display:none;">
   <div class="login-container">
-    <div class="company-logo"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none"><path d="M2 40c6-4 12 4 18 0s12 4 18 0 12 4 18 0" stroke="#fff" stroke-width="2.5" opacity=".5"/><path d="M8 34h48l-6 10h-36z" fill="#fff"/><rect x="14" y="20" width="10" height="14" rx="1" fill="#ef4444"/><rect x="26" y="20" width="10" height="14" rx="1" fill="#eab308"/><rect x="38" y="20" width="10" height="14" rx="1" fill="#3b82f6"/></svg></div>
+    <div class="company-logo">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <path d="M2 40c6-4 12 4 18 0s12 4 18 0 12 4 18 0" stroke="#fff" stroke-width="2.5" opacity=".5"/>
+        <path d="M8 34h48l-6 10h-36z" fill="#fff"/>
+        <rect x="14" y="20" width="10" height="14" rx="1" fill="#ef4444"/>
+        <rect x="26" y="20" width="10" height="14" rx="1" fill="#eab308"/>
+        <rect x="38" y="20" width="10" height="14" rx="1" fill="#3b82f6"/>
+      </svg>
+    </div>
     <h1 class="login-title">PAVARA TRADERS &amp; SERVICES</h1>
     <p class="login-subtitle">Cloud Payroll System</p>
-    <div class="input-group"><input type="text" id="login_user" placeholder="Username" autocomplete="off" onkeydown="if(event.key==='Enter')checkLogin()"></div>
-    <div class="input-group"><input type="password" id="login_pass" placeholder="Password" onkeydown="if(event.key==='Enter')checkLogin()"></div>
+    <div class="input-group">
+      <input type="text" id="login_user" placeholder="Username" autocomplete="off"
+             onkeydown="if(event.key==='Enter')checkLogin()">
+    </div>
+    <div class="input-group">
+      <input type="password" id="login_pass" placeholder="Password"
+             onkeydown="if(event.key==='Enter')checkLogin()">
+    </div>
     <button class="btn-primary" type="button" onclick="checkLogin()">🔐 Login</button>
-    <p id="login_err" style="color:var(--danger);display:none;margin-top:20px;font-weight:600;">Invalid Credentials!</p>
+    <p id="login_err" style="color:#fca5a5;display:none;margin-top:20px;font-weight:600;">Invalid Credentials!</p>
   </div>
 </div>
 
+<!-- ══════════════════════════════ SETTINGS MODAL ══════════════════════════════ -->
 <div class="modal-overlay" id="settingsModal" onclick="closeSettings(event)">
   <div class="modal-content card" onclick="event.stopPropagation()">
-    <div class="modal-header"><h3>⚙️ Settings</h3><button class="modal-close" onclick="closeSettings()">×</button></div>
-    <div style="padding:15px;background:rgba(0,0,0,.03);border-radius:10px;display:flex;justify-content:space-between;align-items:center;">
-      <span>Dark Mode</span><label class="switch"><input type="checkbox" id="themeSwitchInput" onclick="toggleTheme()"><span class="slider"></span></label>
+    <div class="modal-header">
+      <h3>⚙️ Settings</h3>
+      <button class="modal-close" onclick="closeSettings()">×</button>
+    </div>
+    <div style="padding:15px;background:rgba(0,0,0,.03);border-radius:10px;
+                display:flex;justify-content:space-between;align-items:center;">
+      <span>Dark Mode</span>
+      <label class="switch">
+        <input type="checkbox" id="themeSwitchInput" onclick="toggleTheme()">
+        <span class="slider"></span>
+      </label>
     </div>
   </div>
 </div>
 
-<input type="file" id="excelUploadInput" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handleExcelUpload(event)">
+<!-- Hidden file input for Excel/CSV upload -->
+<input type="file" id="excelUploadInput" accept=".xlsx,.xls,.csv"
+       style="display:none;" onchange="handleExcelUpload(event)">
 
+<!-- ══════════════════════════════ APP SHELL ══════════════════════════════ -->
 <div id="app-shell" style="display:none;">
+
+  <!-- NAV BAR -->
   <div class="nav-bar">
-    <div class="nav-brand"><div class="logo-icon">📦</div><span>PAVARA TRADERS &amp; SERVICES</span></div>
+    <div class="nav-brand">
+      <div class="logo-icon">📦</div>
+      <span>PAVARA TRADERS &amp; SERVICES</span>
+    </div>
     <div class="nav-actions">
       <button onclick="changePage('master')"  id="nav-master"  class="nav-btn">Master Data</button>
       <button onclick="changePage('payroll')" id="nav-payroll" class="nav-btn active">Payroll</button>
@@ -355,7 +440,8 @@ input:checked+.slider:before{transform:translateX(24px);}
       <button onclick="changePage('users')"   id="nav-users"   class="nav-btn">Users</button>
       <span id="nav-welcome" class="nav-welcome" style="display:none;"></span>
       <button class="settings-btn" onclick="openSettings()">⚙️</button>
-      <button class="nav-btn" onclick="logout()" style="background:rgba(239,68,68,.2);color:#fca5a5;">Logout</button>
+      <button class="nav-btn" onclick="logout()"
+              style="background:rgba(239,68,68,.2);color:#fca5a5;">Logout</button>
     </div>
   </div>
 
@@ -364,32 +450,82 @@ input:checked+.slider:before{transform:translateX(24px);}
     <!-- ══════════════════════════════ MASTER DATA PAGE ══════════════════════════════ -->
     <div id="page-master" class="page-section hidden">
       <div class="card setup-card">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:12px;">
-          <div><h2>👥 Employee Master Data</h2><p style="color:var(--text-secondary);font-size:14px;margin-top:4px;">Add or import employees.</p></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;
+                    margin-bottom:8px;flex-wrap:wrap;gap:12px;">
+          <div>
+            <h2>👥 Employee Master Data</h2>
+            <p style="color:var(--text-secondary);font-size:14px;margin-top:4px;">
+              Add or import employees.
+            </p>
+          </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <button class="btn-upload" onclick="document.getElementById('excelUploadInput').click()">📂 Upload Excel / CSV</button>
-            <button class="btn-upload" onclick="exportMasterToExcel()" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6,#60a5fa);">📥 Export to Excel</button>
+            <button class="btn-upload"
+                    onclick="document.getElementById('excelUploadInput').click()">
+              📂 Upload Excel / CSV
+            </button>
+            <button class="btn-upload" onclick="exportMasterToExcel()"
+                    style="background:linear-gradient(135deg,#1d4ed8,#3b82f6,#60a5fa);">
+              📥 Export to Excel
+            </button>
           </div>
         </div>
-        <p style="color:var(--text-secondary);font-size:12px;margin-bottom:20px;"><b>Excel/CSV column order:</b> Name, Emp ID, Department, Designation, Roster, Bank, Account No, Basic Salary, Bank Branch, Employment Type</p>
+        <p style="color:var(--text-secondary);font-size:12px;margin-bottom:20px;">
+          <b>Excel/CSV column order:</b>
+          Name, Emp ID, Department, Designation, Roster, Bank, Account No,
+          Basic Salary, Bank Branch, Employment Type
+        </p>
+
+        <!-- Master Data Form -->
         <div class="setup-row">
-          <div class="form-group"><label>Name</label><input type="text" id="inputName" placeholder="Full Name"></div>
-          <div class="form-group"><label>Emp ID</label><input type="text" id="inputId" placeholder="Employee ID"></div>
-          <div class="form-group"><label>Department</label><input type="text" id="inputDept" placeholder="Department"></div>
-          <div class="form-group"><label>Designation</label><input type="text" id="inputDesig" placeholder="Designation"></div>
-          <div class="form-group"><label>Roster</label><input type="text" id="inputRoster" placeholder="Roster"></div>
-          <div class="form-group"><label>Bank</label><select id="inputBank"></select></div>
-          <div class="form-group"><label>Acc No</label><input type="text" id="inputAcc" placeholder="Account Number"></div>
-          <div class="form-group"><label>Basic Salary</label><input type="number" id="inputBasic" placeholder="0.00" min="0" step="0.01"></div>
-          <div class="form-group"><label>Bank Branch</label><input type="text" id="inputBranch" placeholder="e.g. Colombo Fort"></div>
-          <div class="form-group"><label>Employment Type</label><select id="inputEmpType"><option value="Permanent">Permanent</option><option value="Casual">Casual</option></select></div>
+          <div class="form-group"><label>Name</label>
+            <input type="text" id="inputName" placeholder="Full Name"></div>
+          <div class="form-group"><label>Emp ID</label>
+            <input type="text" id="inputId" placeholder="Employee ID"></div>
+          <div class="form-group"><label>Department</label>
+            <input type="text" id="inputDept" placeholder="Department"></div>
+          <div class="form-group"><label>Designation</label>
+            <input type="text" id="inputDesig" placeholder="Designation"></div>
+          <div class="form-group"><label>Roster</label>
+            <input type="text" id="inputRoster" placeholder="Roster"></div>
+          <div class="form-group"><label>Bank</label>
+            <select id="inputBank"></select></div>
+          <div class="form-group"><label>Acc No</label>
+            <input type="text" id="inputAcc" placeholder="Account Number"></div>
+          <div class="form-group"><label>Basic Salary</label>
+            <input type="number" id="inputBasic" placeholder="0.00" min="0" step="0.01"></div>
+          <div class="form-group"><label>Bank Branch</label>
+            <input type="text" id="inputBranch" placeholder="e.g. Colombo Fort"></div>
+          <div class="form-group"><label>Employment Type</label>
+            <select id="inputEmpType">
+              <option value="Permanent">Permanent</option>
+              <option value="Casual">Casual</option>
+            </select>
+          </div>
           <div class="form-group" style="flex:0 0 180px;display:flex;gap:10px;">
-            <button class="btn-primary" style="flex:1" onclick="saveMasterEmployee()">Save</button>
-            <button class="btn-action btn-clear" style="flex:1;height:46px" onclick="clearMasterForm()">Clear</button>
+            <button class="btn-primary" style="flex:1"
+                    onclick="saveMasterEmployee()">Save</button>
+            <button class="btn-action btn-clear" style="flex:1;height:46px"
+                    onclick="clearMasterForm()">Clear</button>
           </div>
         </div>
+
+        <!-- Master Allowances Panel -->
+        <div class="master-allowances-panel">
+          <div class="panel-title">
+            <span>📋 Fixed Allowances / Deductions (optional — auto-fill into payroll)</span>
+            <button class="btn-plus" onclick="addMasterAllowRow()">+ Add Row</button>
+          </div>
+          <div id="master-allowance-rows"></div>
+        </div>
+
+        <!-- Master Table -->
         <div class="master-table-container">
-          <div class="master-header-row"><div>Name</div><div>Emp ID</div><div>Dept</div><div>Desig</div><div>Roster</div><div>Bank</div><div>Acc</div><div>Basic</div><div>Branch</div><div>Type</div><div style="text-align:right;">Actions</div></div>
+          <div class="master-header-row">
+            <div>Name</div><div>Emp ID</div><div>Dept</div><div>Desig</div>
+            <div>Roster</div><div>Bank</div><div>Acc</div><div>Basic</div>
+            <div>Branch</div><div>Type</div>
+            <div style="text-align:right;">Actions</div>
+          </div>
           <div id="master-list-body" class="master-list-body"></div>
         </div>
       </div>
@@ -398,11 +534,7 @@ input:checked+.slider:before{transform:translateX(24px);}
     <!-- ══════════════════════════════ PAYROLL PAGE ══════════════════════════════ -->
     <div id="page-payroll" class="page-section">
 
-      <!-- ★ DASHBOARD FILTER BAR — Month picker + Date Range + Clear -->
-      <!-- Priority: if startDate or endDate has a value → use date range;
-           else if dashMonthFilter has a value → use month;
-           else → show all.
-           onchange calls updateMonthStats() which reads these inputs. -->
+      <!-- Dashboard Filter Bar -->
       <div class="dash-filter-bar">
         <label>Month</label>
         <input type="month" id="dashMonthFilter"
@@ -422,12 +554,10 @@ input:checked+.slider:before{transform:translateX(24px);}
                title="Range end date">
 
         <button class="btn-dash-clear" onclick="clearDashFilters()">✕ Clear Filter</button>
-
-        <!-- Active filter indicator — filled in by updateMonthStats() -->
         <span id="dashActiveFilterLabel" class="dash-active-filter" style="display:none;"></span>
       </div>
 
-      <!-- ★ 4 Summary Boxes — values are driven by the filter above -->
+      <!-- Stats Grid — now 7 boxes including Grand Total -->
       <div class="stats-grid">
         <div class="card stat-card">
           <div class="stat-value" id="stat-emp">0</div>
@@ -449,9 +579,17 @@ input:checked+.slider:before{transform:translateX(24px);}
           <div class="stat-value" id="stat-normalot">LKR 0</div>
           <div class="stat-label">Normal OT Pay</div>
         </div>
+        <div class="card stat-card accent-red">
+          <div class="stat-value" id="stat-epf">LKR 0</div>
+          <div class="stat-label">Total EPF (8%)</div>
+        </div>
+        <div class="card stat-card accent-cyan">
+          <div class="stat-value" id="stat-grandtotal">LKR 0</div>
+          <div class="stat-label">Grand Total</div>
+        </div>
       </div>
 
-      <!-- ★ Monthly Bar Chart -->
+      <!-- Monthly Bar Chart -->
       <div class="card dashboard-chart-card">
         <h3>📊 Monthly Net Pay Overview</h3>
         <div class="chart-wrapper">
@@ -459,22 +597,45 @@ input:checked+.slider:before{transform:translateX(24px);}
         </div>
       </div>
 
-      <div id="edit-mode-banner">✏️ <span id="edit-mode-label">Edit Mode</span><button onclick="cancelEditMode()">✕ Cancel Edit</button></div>
+      <!-- Edit Mode Banner -->
+      <div id="edit-mode-banner">
+        ✏️ <span id="edit-mode-label">Edit Mode</span>
+        <button onclick="cancelEditMode()">✕ Cancel Edit</button>
+      </div>
 
+      <!-- Global Month / Date -->
       <div class="card" style="padding:20px;margin-bottom:20px;">
         <div class="grid-main">
-          <div class="form-group"><label>Salary Month</label><input type="month" id="globalMonth" onchange="updateMonthStats()"></div>
-          <div class="form-group"><label>Date</label><input type="date" id="globalDate"></div>
+          <div class="form-group">
+            <label>Salary Month</label>
+            <input type="month" id="globalMonth" onchange="updateMonthStats()">
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="globalDate">
+          </div>
         </div>
       </div>
 
+      <!-- Employee Cards Container -->
       <div id="employee-container"></div>
 
+      <!-- Action Buttons -->
       <div class="action-grid">
-        <button class="btn-action btn-print" onclick="printSlips()"><span>🖨️</span> Print Salary Slips</button>
-        <button class="btn-action btn-save"  id="btn-save-main"   onclick="saveData()"   style="display:flex;"><span>💾</span> Save</button>
-        <button class="btn-action btn-save"  id="btn-update-main" onclick="updateData()" style="display:none;background:linear-gradient(135deg,#d97706,#f59e0b);"><span>✏️</span> Update Changes</button>
-        <button class="btn-action btn-clear" onclick="clearForm()"><span>🔄</span> Clear</button>
+        <button class="btn-action btn-print" onclick="printSlips()">
+          <span>🖨️</span> Print Salary Slips
+        </button>
+        <button class="btn-action btn-save" id="btn-save-main" onclick="saveData()"
+                style="display:flex;">
+          <span>💾</span> Save
+        </button>
+        <button class="btn-action btn-save" id="btn-update-main" onclick="updateData()"
+                style="display:none;background:linear-gradient(135deg,#d97706,#f59e0b);">
+          <span>✏️</span> Update Changes
+        </button>
+        <button class="btn-action btn-clear" onclick="clearForm()">
+          <span>🔄</span> Clear
+        </button>
       </div>
     </div>
 
@@ -482,8 +643,11 @@ input:checked+.slider:before{transform:translateX(24px);}
     <div id="page-results" class="page-section hidden">
       <div class="card" style="padding:30px;">
         <h2>📊 Final Results</h2>
-        <p style="color:var(--text-secondary);margin-bottom:15px;font-size:14px;">Select employees and export or print.</p>
+        <p style="color:var(--text-secondary);margin-bottom:15px;font-size:14px;">
+          Select employees and export or print.
+        </p>
 
+        <!-- Group by Month Toggle -->
         <div class="results-group-toggle-bar">
           <label class="switch">
             <input type="checkbox" id="groupByMonthToggle" onchange="renderFinalResults()">
@@ -492,16 +656,46 @@ input:checked+.slider:before{transform:translateX(24px);}
           <label for="groupByMonthToggle">Group by Month</label>
         </div>
 
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <button class="btn-action btn-print" onclick="printSelectedRows()"><span>🖨️</span> Print Selected</button>
-          <button class="btn-action btn-save"  onclick="exportSelectedRowsToExcel()"><span>📥</span> Export to Excel</button>
+        <!-- Results Summary Bar -->
+        <div class="results-summary-bar" id="results-summary-bar">
+          <div class="results-summary-item net">
+            <div class="results-summary-val" id="res-sum-net">LKR 0.00</div>
+            <div class="results-summary-lbl">Total Net Pay</div>
+          </div>
+          <div class="results-summary-item adv">
+            <div class="results-summary-val" id="res-sum-adv">LKR 0.00</div>
+            <div class="results-summary-lbl">Total Advances</div>
+          </div>
+          <div class="results-summary-item grand">
+            <div class="results-summary-val" id="res-sum-count">0</div>
+            <div class="results-summary-lbl">Records</div>
+          </div>
         </div>
 
+        <!-- Action Buttons -->
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+          <button class="btn-action btn-print" onclick="printSelectedRows()">
+            <span>🖨️</span> Print Selected
+          </button>
+          <button class="btn-action btn-save" onclick="exportSelectedRowsToExcel()">
+            <span>📥</span> Export to Excel
+          </button>
+        </div>
+
+        <!-- Results Table -->
         <div class="results-table-container">
           <div class="results-header">
-            <div><input type="checkbox" id="selectAllResults" onchange="toggleSelectAllResults(this)"></div>
-            <div>ID</div><div>Name</div><div>Bank Name</div><div>Branch</div><div>Account No</div>
-            <div>Net Pay</div><div style="text-align:right;">Actions</div>
+            <div>
+              <input type="checkbox" id="selectAllResults"
+                     onchange="toggleSelectAllResults(this)">
+            </div>
+            <div>ID</div>
+            <div>Name</div>
+            <div>Bank Name</div>
+            <div>Branch</div>
+            <div>Account No</div>
+            <div>Net Pay</div>
+            <div style="text-align:right;">Actions</div>
           </div>
           <div id="results-body"></div>
         </div>
@@ -512,19 +706,47 @@ input:checked+.slider:before{transform:translateX(24px);}
     <div id="page-users" class="page-section hidden">
       <div class="card setup-card" style="margin-bottom:20px;">
         <h2 id="user-form-heading" style="margin-bottom:6px;">➕ Add New User</h2>
-        <p style="color:var(--text-secondary);font-size:13px;margin-bottom:22px;">Create login credentials for system users.</p>
+        <p style="color:var(--text-secondary);font-size:13px;margin-bottom:22px;">
+          Create login credentials for system users.
+        </p>
         <div class="user-form-row">
-          <div class="form-group"><label>Username</label><input type="text" id="new_u" placeholder="e.g. john_doe" autocomplete="off"></div>
-          <div class="form-group"><label>Password</label><input type="password" id="new_p" placeholder="Enter password"></div>
-          <div class="form-group"><label>Role</label><select id="new_role"><option value="User">User</option><option value="Admin">Admin</option></select></div>
-          <div class="form-group user-form-actions"><label>&nbsp;</label><div style="display:flex;gap:10px;"><button class="btn-action btn-save" id="btn-user-submit" onclick="submitUserAction()" style="flex:2;padding:12px 16px;">Add User</button><button class="btn-action btn-clear" id="btn-user-cancel" onclick="clearUserForm()" style="flex:1;padding:12px 10px;display:none;">Cancel</button></div></div>
+          <div class="form-group"><label>Username</label>
+            <input type="text" id="new_u" placeholder="e.g. john_doe" autocomplete="off">
+          </div>
+          <div class="form-group"><label>Password</label>
+            <input type="password" id="new_p" placeholder="Enter password">
+          </div>
+          <div class="form-group"><label>Role</label>
+            <select id="new_role">
+              <option value="User">User</option>
+              <option value="Admin">Admin</option>
+            </select>
+          </div>
+          <div class="form-group user-form-actions">
+            <label>&nbsp;</label>
+            <div style="display:flex;gap:10px;">
+              <button class="btn-action btn-save" id="btn-user-submit"
+                      onclick="submitUserAction()"
+                      style="flex:2;padding:12px 16px;">Add User</button>
+              <button class="btn-action btn-clear" id="btn-user-cancel"
+                      onclick="clearUserForm()"
+                      style="flex:1;padding:12px 10px;display:none;">Cancel</button>
+            </div>
+          </div>
         </div>
         <input type="hidden" id="edit_user_key" value="">
       </div>
       <div class="card" style="padding:0;overflow:hidden;">
-        <div class="user-table-header-row"><div>#</div><div>Username</div><div>Role</div><div style="text-align:right;">Actions</div></div>
+        <div class="user-table-header-row">
+          <div>#</div><div>Username</div><div>Role</div>
+          <div style="text-align:right;">Actions</div>
+        </div>
         <div id="user-list-display"></div>
-        <div id="user-empty-msg" style="display:none;text-align:center;padding:32px;color:var(--text-secondary);font-size:14px;">No users found.</div>
+        <div id="user-empty-msg"
+             style="display:none;text-align:center;padding:32px;
+                    color:var(--text-secondary);font-size:14px;">
+          No users found.
+        </div>
       </div>
     </div>
 
@@ -537,472 +759,890 @@ input:checked+.slider:before{transform:translateX(24px);}
 /* ══════════════════════════════════════════════════════════
    FIREBASE INIT
    ══════════════════════════════════════════════════════════ */
-const firebaseConfig={apiKey:"AIzaSyAK3Hp1xwCmZdq58o-vFPVLdgPAgetyz4s",authDomain:"pavara-payroll-system.firebaseapp.com",databaseURL:"https://pavara-payroll-system-default-rtdb.firebaseio.com",projectId:"pavara-payroll-system",storageBucket:"pavara-payroll-system.firebasestorage.app",messagingSenderId:"644028566767",appId:"1:644028566767:web:566fc25aebfcff12809f1a"};
-let db=null;
-try{firebase.initializeApp(firebaseConfig);db=firebase.database();}catch(e){console.error(e);}
+const firebaseConfig = {
+  apiKey: "AIzaSyAK3Hp1xwCmZdq58o-vFPVLdgPAgetyz4s",
+  authDomain: "pavara-payroll-system.firebaseapp.com",
+  databaseURL: "https://pavara-payroll-system-default-rtdb.firebaseio.com",
+  projectId: "pavara-payroll-system",
+  storageBucket: "pavara-payroll-system.firebasestorage.app",
+  messagingSenderId: "644028566767",
+  appId: "1:644028566767:web:566fc25aebfcff12809f1a"
+};
+let db = null;
+try { firebase.initializeApp(firebaseConfig); db = firebase.database(); }
+catch(e) { console.error(e); }
 
-/* ── Global State ── */
-const DEFAULT_USER="admin",DEFAULT_PASS="pavara123";
-let masterEmployees=[],payrollHistory=[],payrollResults=[],systemUsers=[],currentMasterEditKey=null,currentEditId=null,currentEditEmpIndex=null,_editEmp=null;
+/* ══════════════════════════════════════════════════════════
+   GLOBAL STATE
+   ══════════════════════════════════════════════════════════ */
+const DEFAULT_USER = "admin", DEFAULT_PASS = "pavara123";
+let masterEmployees  = [];
+let payrollHistory   = [];
+let payrollResults   = [];
+let systemUsers      = [];
+let currentMasterEditKey  = null;
+let currentEditId         = null;
+let currentEditEmpIndex   = null;
+let _editEmp              = null;
+let payrollChart          = null;
 
-/* ── Chart.js Instance ── */
-let payrollChart=null;
+/* ══════════════════════════════════════════════════════════
+   CONSTANTS
+   ══════════════════════════════════════════════════════════ */
+const slBanks = [
+  "Bank of Ceylon","People's Bank","Commercial Bank of Ceylon PLC",
+  "Hatton National Bank","Sampath Bank PLC","Seylan Bank PLC",
+  "National Savings Bank","Nations Trust Bank PLC","Pan Asia Bank",
+  "DFCC Bank PLC","Union Bank of Colombo PLC","Amana Bank PLC",
+  "Cargills Bank PLC","National Development Bank PLC",
+  "Standard Chartered Bank","HSBC Sri Lanka","Citibank N.A.",
+  "Indian Bank","State Bank of India","ICICI Bank",
+  "Habib Bank Ltd.","City Union Bank","MCB Bank Ltd","Al-Rajhi Bank"
+];
 
-/* ── Constants ── */
-const slBanks=["Bank of Ceylon","People's Bank","Commercial Bank of Ceylon PLC","Hatton National Bank","Sampath Bank PLC","Seylan Bank PLC","National Savings Bank","Nations Trust Bank PLC","Pan Asia Bank","DFCC Bank PLC","Union Bank of Colombo PLC","Amana Bank PLC","Cargills Bank PLC","National Development Bank PLC","Standard Chartered Bank","HSBC Sri Lanka","Citibank N.A.","Indian Bank","State Bank of India","ICICI Bank","Habib Bank Ltd.","City Union Bank","MCB Bank Ltd","Al-Rajhi Bank"];
-const allowOptions=["Normal OT Allowance","Double OT","Other Allowance","Fix Allowance","Travelling","Food","Attendance Incentive","Performance Bonus"];
-const dedOptions=["No Pay Basic Deduction","Funeral Fund","New Year Advance","Salary Advance","Loan Recovery","Stamp Duty","Fine/Penalty"];
+const allowOptions = [
+  "Normal OT Allowance","Double OT","Other Allowance","Fix Allowance",
+  "Travelling","Food","Attendance Incentive","Performance Bonus"
+];
+
+const dedOptions = [
+  "No Pay Basic Deduction","Funeral Fund","New Year Advance",
+  "Salary Advance","Loan Recovery","Stamp Duty","Fine/Penalty"
+];
 
 /* ══════════════════════════════════════════════════════════
    HELPERS
    ══════════════════════════════════════════════════════════ */
-function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function fmt(n){return parseFloat(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function isCasualCard(card){var s=card.querySelector('.e-emptype');return s&&s.value==='Casual';}
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmt(n) {
+  return parseFloat(n||0).toLocaleString('en-US',
+    {minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function isCasualCard(card) {
+  var s = card.querySelector('.e-emptype');
+  return s && s.value === 'Casual';
+}
 
-/* Net pay calculation (used by both save and chart) */
-function calcNetPay(emp){
-  var basic=parseFloat(emp.basic)||0,nopay=parseFloat(emp.nopay)||0;
-  var nopayAmt=(basic/30)*nopay,adjBasic=basic-nopayAmt;
-  var otr=parseFloat(emp.otr)||0,dotr=parseFloat(emp.dotr)||0,noth=parseFloat(emp.noth)||0,doth=parseFloat(emp.doth)||0;
-  var otTotal=(noth*otr)+(doth*dotr),totalEarns=0,totalDeds=0;
-  (emp.earns||[]).forEach(function(e){totalEarns+=parseFloat(e.val)||0;});
-  (emp.deds||[]).forEach(function(d){totalDeds+=parseFloat(d.val)||0;});
-  var casual=(emp.emptype==='Casual');
-  var epf8=casual?0:adjBasic*0.08;
-  return adjBasic+otTotal+totalEarns-totalDeds-epf8;
+/* Net pay calculation (shared by save, chart, results) */
+function calcNetPay(emp) {
+  var basic    = parseFloat(emp.basic)  || 0;
+  var nopay    = parseFloat(emp.nopay)  || 0;
+  var nopayAmt = (basic / 30) * nopay;
+  var adjBasic = basic - nopayAmt;
+  var otr      = parseFloat(emp.otr)   || 0;
+  var dotr     = parseFloat(emp.dotr)  || 0;
+  var noth     = parseFloat(emp.noth)  || 0;
+  var doth     = parseFloat(emp.doth)  || 0;
+  var otTotal  = (noth * otr) + (doth * dotr);
+  var totalEarns = 0, totalDeds = 0;
+  (emp.earns || []).forEach(function(e){ totalEarns += parseFloat(e.val) || 0; });
+  (emp.deds  || []).forEach(function(d){ totalDeds  += parseFloat(d.val) || 0; });
+  var casual = (emp.emptype === 'Casual');
+  var epf8   = casual ? 0 : adjBasic * 0.08;
+  return adjBasic + otTotal + totalEarns - totalDeds - epf8;
 }
 
 /* ══════════════════════════════════════════════════════════
    BOOT
    ══════════════════════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded',function(){
+document.addEventListener('DOMContentLoaded', function() {
   initTheme();
-  /* Set default filter to current month on first load */
-  var now=new Date();
-  var curMonth=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
-  var mf=document.getElementById('dashMonthFilter');
-  if(mf)mf.value=curMonth;
+  /* Default filter = current month */
+  var now = new Date();
+  var cur = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  var mf  = document.getElementById('dashMonthFilter');
+  if (mf) mf.value = cur;
 
-  if(!db){showLogin("Firebase failed.");return;}
+  if (!db) { showLogin("Firebase failed."); return; }
   seedAdminIfNeeded();
-  db.ref('.info/connected').once('value',function(){
-    if(sessionStorage.getItem('pavara_session')){showApp();}else{showLogin();}
-  },function(){showLogin();});
+  db.ref('.info/connected').once('value', function() {
+    if (sessionStorage.getItem('pavara_session')) { showApp(); }
+    else { showLogin(); }
+  }, function() { showLogin(); });
 });
 
 /* ══════════════════════════════════════════════════════════
    AUTH
    ══════════════════════════════════════════════════════════ */
-function showLogin(msg){
-  document.getElementById('loading-overlay').style.display='none';
-  document.getElementById('auth-screen').style.display='flex';
-  document.getElementById('app-shell').style.display='none';
-  if(msg){var el=document.getElementById('login_err');el.textContent=msg;el.style.display='block';}
+function showLogin(msg) {
+  document.getElementById('loading-overlay').style.display = 'none';
+  document.getElementById('auth-screen').style.display    = 'flex';
+  document.getElementById('app-shell').style.display      = 'none';
+  if (msg) {
+    var el = document.getElementById('login_err');
+    el.textContent = msg; el.style.display = 'block';
+  }
 }
-function showApp(){
-  document.getElementById('loading-overlay').style.display='none';
-  document.getElementById('auth-screen').style.display='none';
-  document.getElementById('app-shell').style.display='block';
-  var su=sessionStorage.getItem('pavara_user')||'',we=document.getElementById('nav-welcome');
-  if(su){we.textContent='Welcome, '+su;we.style.display='inline-flex';}else{we.style.display='none';}
-  listenToMasterData();listenToPayrollHistory();listenToUsers();
-  populateBankDropdown('inputBank');renderEmployees();
+function showApp() {
+  document.getElementById('loading-overlay').style.display = 'none';
+  document.getElementById('auth-screen').style.display    = 'none';
+  document.getElementById('app-shell').style.display      = 'block';
+  var su = sessionStorage.getItem('pavara_user') || '';
+  var we = document.getElementById('nav-welcome');
+  if (su) { we.textContent = 'Welcome, ' + su; we.style.display = 'inline-flex'; }
+  else    { we.style.display = 'none'; }
+  listenToMasterData();
+  listenToPayrollHistory();
+  listenToUsers();
+  populateBankDropdown('inputBank');
+  renderEmployees();
 }
-async function checkLogin(){
-  var u=document.getElementById('login_user').value.trim(),p=document.getElementById('login_pass').value.trim();
-  if(!u||!p){showLoginError('Please enter both.');return;}
-  if(u===DEFAULT_USER&&p===DEFAULT_PASS){loginSuccess(DEFAULT_USER);return;}
-  if(db){try{var snap=await db.ref('system_users').orderByChild('u').equalTo(u).once('value');
-    if(snap.exists()){var ok=false;snap.forEach(function(c){if(c.val().p===p)ok=true;});if(ok){loginSuccess(u);return;}}
-  }catch(e){console.error(e);}}
+async function checkLogin() {
+  var u = document.getElementById('login_user').value.trim();
+  var p = document.getElementById('login_pass').value.trim();
+  if (!u || !p) { showLoginError('Please enter both.'); return; }
+  if (u === DEFAULT_USER && p === DEFAULT_PASS) { loginSuccess(DEFAULT_USER); return; }
+  if (db) {
+    try {
+      var snap = await db.ref('system_users').orderByChild('u').equalTo(u).once('value');
+      if (snap.exists()) {
+        var ok = false;
+        snap.forEach(function(c){ if (c.val().p === p) ok = true; });
+        if (ok) { loginSuccess(u); return; }
+      }
+    } catch(e) { console.error(e); }
+  }
   showLoginError('Invalid Credentials!');
 }
-function showLoginError(msg){var e=document.getElementById('login_err');e.textContent=msg;e.style.display='block';setTimeout(function(){e.style.display='none';},4000);}
-function loginSuccess(u){sessionStorage.setItem('pavara_session','active');if(u)sessionStorage.setItem('pavara_user',u);showApp();}
-function logout(){sessionStorage.removeItem('pavara_session');sessionStorage.removeItem('pavara_user');location.reload();}
+function showLoginError(msg) {
+  var e = document.getElementById('login_err');
+  e.textContent = msg; e.style.display = 'block';
+  setTimeout(function(){ e.style.display = 'none'; }, 4000);
+}
+function loginSuccess(u) {
+  sessionStorage.setItem('pavara_session', 'active');
+  if (u) sessionStorage.setItem('pavara_user', u);
+  showApp();
+}
+function logout() {
+  sessionStorage.removeItem('pavara_session');
+  sessionStorage.removeItem('pavara_user');
+  location.reload();
+}
 
 /* ══════════════════════════════════════════════════════════
    FIREBASE LISTENERS
    ══════════════════════════════════════════════════════════ */
-function listenToMasterData(){
-  if(!db)return;
-  db.ref('MasterData').on('value',function(s){
-    masterEmployees=[];
-    if(s.exists()){Object.entries(s.val()).forEach(function(p){masterEmployees.push(Object.assign({key:p[0]},p[1]));});}
-    renderMasterTable();populatePayrollDatalist();
+function listenToMasterData() {
+  if (!db) return;
+  db.ref('MasterData').on('value', function(s) {
+    masterEmployees = [];
+    if (s.exists()) {
+      Object.entries(s.val()).forEach(function(p) {
+        masterEmployees.push(Object.assign({key: p[0]}, p[1]));
+      });
+    }
+    renderMasterTable();
+    populatePayrollDatalist();
   });
 }
-function listenToPayrollHistory(){
-  if(!db)return;
-  db.ref('payroll_history').on('value',function(s){
-    payrollHistory=[];payrollResults=[];
-    s.forEach(function(c){
-      var batch=c.val();payrollHistory.push(Object.assign({key:c.key},batch));
-      if(batch.employees){batch.employees.forEach(function(emp,idx){
-        var net=calcNetPay(emp);
-        payrollResults.push(Object.assign({},emp,{firebaseKey:c.key,empIndex:idx,rowId:c.key+"_"+idx,netPay:net.toFixed(2),month:batch.month,date:batch.date||''}));
-      });}
+function listenToPayrollHistory() {
+  if (!db) return;
+  db.ref('payroll_history').on('value', function(s) {
+    payrollHistory = [];
+    payrollResults = [];
+    s.forEach(function(c) {
+      var batch = c.val();
+      payrollHistory.push(Object.assign({key: c.key}, batch));
+      if (batch.employees) {
+        batch.employees.forEach(function(emp, idx) {
+          var net = calcNetPay(emp);
+          payrollResults.push(Object.assign({}, emp, {
+            firebaseKey: c.key,
+            empIndex:    idx,
+            rowId:       c.key + '_' + idx,
+            netPay:      net.toFixed(2),
+            month:       batch.month,
+            date:        batch.date || ''
+          }));
+        });
+      }
     });
     renderFinalResults();
     updateMonthStats();
     buildMonthlyChart();
-    document.getElementById('loading-overlay').style.display='none';
-  },function(err){console.error(err);document.getElementById('loading-overlay').style.display='none';});
-}
-function listenToUsers(){
-  if(!db)return;
-  db.ref('system_users').on('value',function(s){
-    systemUsers=[];s.forEach(function(c){systemUsers.push(Object.assign({key:c.key},c.val()));});
-    if(document.getElementById('app-shell').style.display!=='none'){renderUserList();}
-    if(systemUsers.length===0){db.ref('system_users').push({u:DEFAULT_USER,p:DEFAULT_PASS,role:'Admin'});}
+    updateResultsSummaryBar();
+    document.getElementById('loading-overlay').style.display = 'none';
+  }, function(err) {
+    console.error(err);
+    document.getElementById('loading-overlay').style.display = 'none';
   });
 }
-function seedAdminIfNeeded(){
-  if(!db)return;
-  db.ref('system_users').orderByChild('u').equalTo(DEFAULT_USER).once('value',function(snap){
-    if(!snap.exists()){db.ref('system_users').push({u:DEFAULT_USER,p:DEFAULT_PASS,role:'Admin'});}
+function listenToUsers() {
+  if (!db) return;
+  db.ref('system_users').on('value', function(s) {
+    systemUsers = [];
+    s.forEach(function(c){ systemUsers.push(Object.assign({key: c.key}, c.val())); });
+    if (document.getElementById('app-shell').style.display !== 'none') {
+      renderUserList();
+    }
+    if (systemUsers.length === 0) {
+      db.ref('system_users').push({u: DEFAULT_USER, p: DEFAULT_PASS, role: 'Admin'});
+    }
+  });
+}
+function seedAdminIfNeeded() {
+  if (!db) return;
+  db.ref('system_users').orderByChild('u').equalTo(DEFAULT_USER).once('value', function(snap) {
+    if (!snap.exists()) {
+      db.ref('system_users').push({u: DEFAULT_USER, p: DEFAULT_PASS, role: 'Admin'});
+    }
   });
 }
 
 /* ══════════════════════════════════════════════════════════
    BANK DROPDOWN
    ══════════════════════════════════════════════════════════ */
-function populateBankDropdown(id){
-  var sel=document.getElementById(id);if(!sel)return;
-  sel.innerHTML='<option value="">Select Bank</option>';
-  slBanks.forEach(function(b){var o=document.createElement('option');o.value=b;o.textContent=b;sel.appendChild(o);});
+function populateBankDropdown(id) {
+  var sel = document.getElementById(id);
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Select Bank</option>';
+  slBanks.forEach(function(b) {
+    var o = document.createElement('option');
+    o.value = b; o.textContent = b;
+    sel.appendChild(o);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   MASTER DATA — ALLOWANCES PANEL
+   ══════════════════════════════════════════════════════════ */
+function addMasterAllowRow(type, lbl, val) {
+  type = type || 'earn';
+  lbl  = lbl  || '';
+  val  = val  || '';
+  var opts = type === 'earn' ? allowOptions : dedOptions;
+  var container = document.getElementById('master-allowance-rows');
+  if (!container) return;
+  var div = document.createElement('div');
+  div.className = 'row-item';
+  div.innerHTML =
+    '<select style="flex:1;padding:8px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:8px;color:var(--input-text);font-size:13px;">' +
+      '<option value="earn">Allowance (+)</option>' +
+      '<option value="ded">Deduction (-)</option>' +
+    '</select>' +
+    '<select style="flex:2;padding:8px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:8px;color:var(--input-text);font-size:13px;">' +
+      opts.map(function(o){ return '<option' + (o===lbl?' selected':'') + '>' + o + '</option>'; }).join('') +
+    '</select>' +
+    '<input type="number" value="' + val + '" placeholder="0.00"' +
+      ' style="flex:1;padding:8px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:8px;color:var(--input-text);">' +
+    '<button class="btn-rem" onclick="this.parentElement.remove()">×</button>';
+
+  var typeSelect  = div.querySelector('select:first-child');
+  var labelSelect = div.querySelector('select:nth-child(2)');
+  typeSelect.value = type;
+  typeSelect.onchange = function() {
+    var newOpts = this.value === 'earn' ? allowOptions : dedOptions;
+    labelSelect.innerHTML = newOpts.map(function(o){ return '<option>' + o + '</option>'; }).join('');
+  };
+
+  container.appendChild(div);
+}
+
+function getMasterAllowances() {
+  var rows = document.querySelectorAll('#master-allowance-rows .row-item');
+  var earns = [], deds = [];
+  rows.forEach(function(r) {
+    var selType  = r.querySelector('select:first-child');
+    var selLabel = r.querySelector('select:nth-child(2)');
+    var inp      = r.querySelector('input[type="number"]');
+    var v = parseFloat(inp ? inp.value : 0) || 0;
+    if (v === 0) return;
+    if (selType && selType.value === 'ded') {
+      deds.push({lbl: selLabel ? selLabel.value : '', val: String(v)});
+    } else {
+      earns.push({lbl: selLabel ? selLabel.value : '', val: String(v)});
+    }
+  });
+  return {earns: earns, deds: deds};
 }
 
 /* ══════════════════════════════════════════════════════════
    MASTER DATA CRUD
    ══════════════════════════════════════════════════════════ */
-function saveMasterEmployee(){
-  var data={name:document.getElementById('inputName').value.trim(),id:document.getElementById('inputId').value.trim(),dept:document.getElementById('inputDept').value.trim(),desig:document.getElementById('inputDesig').value.trim(),roster:document.getElementById('inputRoster').value.trim(),bank:document.getElementById('inputBank').value,acc:document.getElementById('inputAcc').value.trim(),basic:document.getElementById('inputBasic').value.trim(),branch:document.getElementById('inputBranch').value.trim(),emptype:document.getElementById('inputEmpType').value};
-  if(!data.name)return alert("Name is required");
-  if(currentMasterEditKey){db.ref('MasterData/'+currentMasterEditKey).update(data);currentMasterEditKey=null;}
-  else{db.ref('MasterData').push(data);}
+function saveMasterEmployee() {
+  var allow = getMasterAllowances();
+  var data = {
+    name:    document.getElementById('inputName').value.trim(),
+    id:      document.getElementById('inputId').value.trim(),
+    dept:    document.getElementById('inputDept').value.trim(),
+    desig:   document.getElementById('inputDesig').value.trim(),
+    roster:  document.getElementById('inputRoster').value.trim(),
+    bank:    document.getElementById('inputBank').value,
+    acc:     document.getElementById('inputAcc').value.trim(),
+    basic:   document.getElementById('inputBasic').value.trim(),
+    branch:  document.getElementById('inputBranch').value.trim(),
+    emptype: document.getElementById('inputEmpType').value,
+    fixEarns: allow.earns,
+    fixDeds:  allow.deds
+  };
+  if (!data.name) return alert("Name is required");
+  if (currentMasterEditKey) {
+    db.ref('MasterData/' + currentMasterEditKey).update(data);
+    currentMasterEditKey = null;
+  } else {
+    db.ref('MasterData').push(data);
+  }
   clearMasterForm();
 }
-function editMaster(k){
-  var e=masterEmployees.find(function(x){return x.key===k;});if(!e)return;
-  currentMasterEditKey=k;
-  document.getElementById('inputName').value=e.name;document.getElementById('inputId').value=e.id;
-  document.getElementById('inputDept').value=e.dept||'';document.getElementById('inputDesig').value=e.desig||'';
-  document.getElementById('inputRoster').value=e.roster||'';document.getElementById('inputBank').value=e.bank||'';
-  document.getElementById('inputAcc').value=e.acc||'';document.getElementById('inputBasic').value=e.basic||'';
-  document.getElementById('inputBranch').value=e.branch||'';document.getElementById('inputEmpType').value=e.emptype||'Permanent';
+function editMaster(k) {
+  var e = masterEmployees.find(function(x){ return x.key === k; });
+  if (!e) return;
+  currentMasterEditKey = k;
+  document.getElementById('inputName').value    = e.name;
+  document.getElementById('inputId').value      = e.id;
+  document.getElementById('inputDept').value    = e.dept    || '';
+  document.getElementById('inputDesig').value   = e.desig   || '';
+  document.getElementById('inputRoster').value  = e.roster  || '';
+  document.getElementById('inputBank').value    = e.bank    || '';
+  document.getElementById('inputAcc').value     = e.acc     || '';
+  document.getElementById('inputBasic').value   = e.basic   || '';
+  document.getElementById('inputBranch').value  = e.branch  || '';
+  document.getElementById('inputEmpType').value = e.emptype || 'Permanent';
+
+  document.getElementById('master-allowance-rows').innerHTML = '';
+  (e.fixEarns || []).forEach(function(a){ addMasterAllowRow('earn', a.lbl, a.val); });
+  (e.fixDeds  || []).forEach(function(d){ addMasterAllowRow('ded',  d.lbl, d.val); });
 }
-function deleteMaster(k){if(confirm("Delete this employee?"))db.ref('MasterData/'+k).remove();}
-function clearMasterForm(){
-  currentMasterEditKey=null;
-  ['inputName','inputId','inputDept','inputDesig','inputRoster','inputAcc','inputBasic','inputBranch'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('inputBank').value='';document.getElementById('inputEmpType').value='Permanent';
+function deleteMaster(k) {
+  if (confirm("Delete this employee?")) db.ref('MasterData/' + k).remove();
 }
-function renderMasterTable(){
-  var c=document.getElementById('master-list-body');if(!c)return;c.innerHTML='';
-  if(masterEmployees.length===0){c.innerHTML='<div style="text-align:center;padding:30px;color:var(--text-secondary);">No employees found.</div>';return;}
-  masterEmployees.forEach(function(e){
-    var et=e.emptype||'Permanent',bc=et==='Casual'?'casual':'permanent';
-    var row=document.createElement('div');row.className='master-row-item';
-    row.innerHTML='<div>'+escHtml(e.name)+'</div><div>'+escHtml(e.id||'-')+'</div><div>'+escHtml(e.dept||'-')+'</div><div>'+escHtml(e.desig||'-')+'</div><div>'+escHtml(e.roster||'-')+'</div><div>'+escHtml(e.bank||'-')+'</div><div>'+escHtml(e.acc||'-')+'</div><div>'+escHtml(e.basic||'-')+'</div><div>'+escHtml(e.branch||'-')+'</div><div><span class="emp-type-badge '+bc+'">'+escHtml(et)+'</span></div><div style="display:flex;gap:5px;justify-content:flex-end;"><button class="btn-small btn-plus" onclick="editMaster(\''+e.key+'\')">Edit</button><button class="btn-small btn-rem" onclick="deleteMaster(\''+e.key+'\')">X</button></div>';
+function clearMasterForm() {
+  currentMasterEditKey = null;
+  ['inputName','inputId','inputDept','inputDesig','inputRoster',
+   'inputAcc','inputBasic','inputBranch'].forEach(function(id){
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('inputBank').value    = '';
+  document.getElementById('inputEmpType').value = 'Permanent';
+  document.getElementById('master-allowance-rows').innerHTML = '';
+}
+function renderMasterTable() {
+  var c = document.getElementById('master-list-body');
+  if (!c) return;
+  c.innerHTML = '';
+  if (masterEmployees.length === 0) {
+    c.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-secondary);">No employees found.</div>';
+    return;
+  }
+  masterEmployees.forEach(function(e) {
+    var et  = e.emptype || 'Permanent';
+    var bc  = et === 'Casual' ? 'casual' : 'permanent';
+    var row = document.createElement('div');
+    row.className = 'master-row-item';
+    row.innerHTML =
+      '<div>' + escHtml(e.name)         + '</div>' +
+      '<div>' + escHtml(e.id   || '-')  + '</div>' +
+      '<div>' + escHtml(e.dept || '-')  + '</div>' +
+      '<div>' + escHtml(e.desig|| '-')  + '</div>' +
+      '<div>' + escHtml(e.roster||'-')  + '</div>' +
+      '<div>' + escHtml(e.bank || '-')  + '</div>' +
+      '<div>' + escHtml(e.acc  || '-')  + '</div>' +
+      '<div>' + escHtml(e.basic|| '-')  + '</div>' +
+      '<div>' + escHtml(e.branch||'-')  + '</div>' +
+      '<div><span class="emp-type-badge ' + bc + '">' + escHtml(et) + '</span></div>' +
+      '<div style="display:flex;gap:5px;justify-content:flex-end;">' +
+        '<button class="btn-small btn-plus" onclick="editMaster(\'' + e.key + '\')">Edit</button>' +
+        '<button class="btn-small btn-rem"  onclick="deleteMaster(\'' + e.key + '\')">X</button>' +
+      '</div>';
     c.appendChild(row);
   });
 }
-function handleExcelUpload(event){
-  var file=event.target.files[0];if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    try{
-      var data=new Uint8Array(e.target.result),wb=XLSX.read(data,{type:'array'}),sheet=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(sheet,{header:1,defval:''});
-      if(!rows||rows.length===0){alert("Empty file.");return;}
-      var sr=0,fc=String(rows[0][0]||'').toLowerCase().trim();
-      if(fc==='name'||fc==='employee name'||isNaN(parseFloat(fc)))sr=1;
-      var im=0,sk=0,pr=[];
-      for(var i=sr;i<rows.length;i++){
-        var r=rows[i];if(!r||r.every(function(c){return String(c).trim()==='';})){ continue;}
-        var rt=String(r[9]||'').trim();
-        var rec={name:String(r[0]||'').trim(),id:String(r[1]||'').trim(),dept:String(r[2]||'').trim(),desig:String(r[3]||'').trim(),roster:String(r[4]||'').trim(),bank:String(r[5]||'').trim(),acc:String(r[6]||'').trim(),basic:String(r[7]||'').trim(),branch:String(r[8]||'').trim(),emptype:rt.toLowerCase()==='casual'?'Casual':'Permanent'};
-        if(!rec.name){sk++;continue;}pr.push(db.ref('MasterData').push(rec));im++;
+
+/* ── Excel Import ── */
+function handleExcelUpload(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = new Uint8Array(e.target.result);
+      var wb   = XLSX.read(data, {type:'array'});
+      var sheet= wb.Sheets[wb.SheetNames[0]];
+      var rows = XLSX.utils.sheet_to_json(sheet, {header:1, defval:''});
+      if (!rows || rows.length === 0) { alert("Empty file."); return; }
+      var sr = 0;
+      var fc = String(rows[0][0] || '').toLowerCase().trim();
+      if (fc === 'name' || fc === 'employee name' || isNaN(parseFloat(fc))) sr = 1;
+      var im = 0, sk = 0, pr = [];
+      for (var i = sr; i < rows.length; i++) {
+        var r = rows[i];
+        if (!r || r.every(function(c){ return String(c).trim() === ''; })) continue;
+        var rt  = String(r[9] || '').trim();
+        var rec = {
+          name:    String(r[0] || '').trim(),
+          id:      String(r[1] || '').trim(),
+          dept:    String(r[2] || '').trim(),
+          desig:   String(r[3] || '').trim(),
+          roster:  String(r[4] || '').trim(),
+          bank:    String(r[5] || '').trim(),
+          acc:     String(r[6] || '').trim(),
+          basic:   String(r[7] || '').trim(),
+          branch:  String(r[8] || '').trim(),
+          emptype: rt.toLowerCase() === 'casual' ? 'Casual' : 'Permanent',
+          fixEarns: [],
+          fixDeds:  []
+        };
+        if (!rec.name) { sk++; continue; }
+        pr.push(db.ref('MasterData').push(rec));
+        im++;
       }
-      Promise.all(pr).then(function(){alert('Import complete!\n'+im+' records imported.'+(sk>0?'\n'+sk+' skipped.':''));}).catch(function(err){alert('Import error: '+err.message);});
-    }catch(err){alert('Failed: '+err.message);}
+      Promise.all(pr).then(function() {
+        alert('Import complete!\n' + im + ' records imported.' +
+              (sk > 0 ? '\n' + sk + ' skipped.' : ''));
+      }).catch(function(err){ alert('Import error: ' + err.message); });
+    } catch(err){ alert('Failed: ' + err.message); }
   };
-  reader.readAsArrayBuffer(file);event.target.value='';
+  reader.readAsArrayBuffer(file);
+  event.target.value = '';
 }
-function exportMasterToExcel(){
-  if(!masterEmployees||masterEmployees.length===0){alert("No data to export.");return;}
-  var wd=[["Name","Emp ID","Department","Designation","Roster","Bank","Account No","Basic Salary","Bank Branch","Employment Type"]];
-  masterEmployees.forEach(function(e){wd.push([e.name||'',e.id||'',e.dept||'',e.desig||'',e.roster||'',e.bank||'',e.acc||'',e.basic||'',e.branch||'',e.emptype||'Permanent']);});
-  var wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(wd);
-  var cw=wd[0].map(function(_,ci){return{wch:Math.max.apply(null,wd.map(function(row){return row[ci]?String(row[ci]).length+2:10;}))};});
-  ws['!cols']=cw;XLSX.utils.book_append_sheet(wb,ws,"Master Data");
-  var d=new Date(),s=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-  XLSX.writeFile(wb,"Pavara_MasterData_"+s+".xlsx");
+
+/* ── Excel Export ── */
+function exportMasterToExcel() {
+  if (!masterEmployees || masterEmployees.length === 0) {
+    alert("No data to export."); return;
+  }
+  var wd = [["Name","Emp ID","Department","Designation","Roster","Bank",
+             "Account No","Basic Salary","Bank Branch","Employment Type"]];
+  masterEmployees.forEach(function(e) {
+    wd.push([e.name||'',e.id||'',e.dept||'',e.desig||'',e.roster||'',
+             e.bank||'',e.acc||'',e.basic||'',e.branch||'',e.emptype||'Permanent']);
+  });
+  var wb = XLSX.utils.book_new();
+  var ws = XLSX.utils.aoa_to_sheet(wd);
+  var cw = wd[0].map(function(_,ci) {
+    return {wch: Math.max.apply(null, wd.map(function(row){
+      return row[ci] ? String(row[ci]).length + 2 : 10;
+    }))};
+  });
+  ws['!cols'] = cw;
+  XLSX.utils.book_append_sheet(wb, ws, "Master Data");
+  var d  = new Date();
+  var ds = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') +
+           '-' + String(d.getDate()).padStart(2,'0');
+  XLSX.writeFile(wb, "Pavara_MasterData_" + ds + ".xlsx");
 }
 
 /* ══════════════════════════════════════════════════════════
-   PAYROLL FORM — RENDER & HELPERS
+   PAYROLL FORM — RENDER
    ══════════════════════════════════════════════════════════ */
-function renderEmployees(){
-  var c=document.getElementById('employee-container');if(!c)return;
-  c.innerHTML=[1,2].map(function(n){
-    return '<div class="card employee-card" id="emp_row_'+n+'">'+
-    '<div class="employee-header">'+
-      '<div style="display:flex;align-items:center;gap:15px;flex:1;">'+
-        '<div class="employee-number">'+n+'</div>'+
-        '<div class="emp-title-display"><h3 class="emp-id-text">ID</h3><div class="emp-name-text"></div></div>'+
-      '</div>'+
-      '<label class="switch"><input type="checkbox" checked onchange="toggleEmployee(this,'+n+')"><span class="slider"></span></label>'+
-    '</div>'+
-    '<div class="employee-content">'+
-      '<div class="grid-main">'+
-        '<div class="form-group"><label>Name</label><input type="text" class="e-name" list="masterList" oninput="autoFillPayroll(this,'+n+')" placeholder="Type name..."></div>'+
-        '<div class="form-group"><label>Emp ID</label><input type="text" class="e-id" oninput="updateEmpIdDisplay(this,'+n+')" placeholder="Auto / Manual"></div>'+
-        '<div class="form-group"><label>Dept</label><input type="text" class="e-dept" placeholder="Department"></div>'+
-        '<div class="form-group"><label>Desig</label><input type="text" class="e-desig" placeholder="Designation"></div>'+
-        '<div class="form-group"><label>Roster</label><input type="text" class="e-roster" placeholder="Roster"></div>'+
-        '<div class="form-group"><label>Bank</label><select class="e-bank" id="e-bank-'+n+'"></select></div>'+
-        '<div class="form-group"><label>Acc</label><input type="text" class="e-acc" placeholder="Account No"></div>'+
-        '<div class="form-group"><label>Employment Type</label><select class="e-emptype" onchange="onEmpTypeChange('+n+')"><option value="Permanent">Permanent</option><option value="Casual">Casual</option></select></div>'+
-        '<input type="hidden" class="e-branch">'+
-      '</div>'+
-      '<div class="grid-main calc-section" style="margin-top:15px">'+
-        '<div class="form-group"><label>Basic</label><input type="number" class="e-basic" placeholder="0.00" oninput="updateCalculations('+n+')" onchange="updateMonthStats()"></div>'+
-        '<div class="form-group"><label>Exp Days</label><input type="number" class="e-expd" placeholder="26" oninput="updateCalculations('+n+')"></div>'+
-        '<div class="form-group"><label>Act Days</label><input type="number" class="e-actd" placeholder="26" oninput="updateCalculations('+n+')"></div>'+
-        '<div class="form-group"><label>No-Pay Days</label><input type="number" class="e-nopay" placeholder="0" oninput="updateCalculations('+n+')"></div>'+
-        '<div class="form-group"><label>OT Rate (1h)</label><input type="number" class="e-otr" placeholder="0.00" onchange="updateMonthStats()"></div>'+
-        '<div class="form-group"><label>Norm OT (Hrs)</label><input type="number" class="e-noth" placeholder="0" onchange="updateMonthStats()"></div>'+
-        '<div class="form-group"><label>D.OT Rate</label><input type="number" class="e-dotr" placeholder="437.50" onchange="updateMonthStats()"></div>'+
-        '<div class="form-group"><label>Double OT (Hrs)</label><input type="number" class="e-doth" placeholder="0" onchange="updateMonthStats()"></div>'+
-      '</div>'+
-      '<div class="grid-main" style="margin-top:15px;">'+
-        '<div>'+
-          '<label style="display:flex;justify-content:space-between;align-items:center;"><span>Allowances (+)</span><button class="btn-plus" onclick="addDynamicRow(\'earn_box_'+n+'\',\'earn_amt\',allowOptions)">+ Add</button></label>'+
-          '<div id="earn_box_'+n+'"></div>'+
-        '</div>'+
-        '<div>'+
-          '<label style="display:flex;justify-content:space-between;align-items:center;"><span>Deductions (-)</span><button class="btn-plus" style="background:var(--danger)" onclick="addDynamicRow(\'ded_box_'+n+'\',\'ded_amt\',dedOptions)">+ Add</button></label>'+
-          '<div id="ded_box_'+n+'">'+
-            '<div class="row-item"><span style="flex:2;color:var(--text-secondary);font-size:13px;">EPF Employee (8%)</span><input type="number" class="ded_amt_epf" id="epf_val_'+n+'" placeholder="0.00" style="flex:1;" readonly></div>'+
-          '</div>'+
-        '</div>'+
-      '</div>'+
-    '</div>'+
-    '</div>';
+function renderEmployees() {
+  var c = document.getElementById('employee-container');
+  if (!c) return;
+  c.innerHTML = [1,2].map(function(n) {
+    return (
+      '<div class="card employee-card" id="emp_row_' + n + '">' +
+        '<div class="employee-header">' +
+          '<div style="display:flex;align-items:center;gap:15px;flex:1;">' +
+            '<div class="employee-number">' + n + '</div>' +
+            '<div class="emp-title-display">' +
+              '<h3 class="emp-id-text">ID</h3>' +
+              '<div class="emp-name-text"></div>' +
+            '</div>' +
+          '</div>' +
+          '<label class="switch">' +
+            '<input type="checkbox" checked onchange="toggleEmployee(this,' + n + ')">' +
+            '<span class="slider"></span>' +
+          '</label>' +
+        '</div>' +
+        '<div class="employee-content">' +
+          '<div class="grid-main">' +
+            '<div class="form-group"><label>Name</label>' +
+              '<input type="text" class="e-name" list="masterList"' +
+              ' oninput="autoFillPayroll(this,' + n + ')" placeholder="Type name..."></div>' +
+            '<div class="form-group"><label>Emp ID</label>' +
+              '<input type="text" class="e-id"' +
+              ' oninput="updateEmpIdDisplay(this,' + n + ')" placeholder="Auto / Manual"></div>' +
+            '<div class="form-group"><label>Dept</label>' +
+              '<input type="text" class="e-dept" placeholder="Department"></div>' +
+            '<div class="form-group"><label>Desig</label>' +
+              '<input type="text" class="e-desig" placeholder="Designation"></div>' +
+            '<div class="form-group"><label>Roster</label>' +
+              '<input type="text" class="e-roster" placeholder="Roster"></div>' +
+            '<div class="form-group"><label>Bank</label>' +
+              '<select class="e-bank" id="e-bank-' + n + '"></select></div>' +
+            '<div class="form-group"><label>Acc</label>' +
+              '<input type="text" class="e-acc" placeholder="Account No"></div>' +
+            '<div class="form-group"><label>Employment Type</label>' +
+              '<select class="e-emptype" onchange="onEmpTypeChange(' + n + ')">' +
+                '<option value="Permanent">Permanent</option>' +
+                '<option value="Casual">Casual</option>' +
+              '</select></div>' +
+            '<input type="hidden" class="e-branch">' +
+          '</div>' +
+
+          '<div class="grid-main calc-section" style="margin-top:15px">' +
+            '<div class="form-group"><label>Basic</label>' +
+              '<input type="number" class="e-basic" placeholder="0.00"' +
+              ' oninput="updateCalculations(' + n + ')"' +
+              ' onchange="updateMonthStats()"></div>' +
+            '<div class="form-group"><label>Exp Days</label>' +
+              '<input type="number" class="e-expd" placeholder="26"' +
+              ' oninput="updateCalculations(' + n + ')"></div>' +
+            '<div class="form-group"><label>Act Days</label>' +
+              '<input type="number" class="e-actd" placeholder="26"' +
+              ' oninput="updateCalculations(' + n + ')"></div>' +
+            '<div class="form-group"><label>No-Pay Days</label>' +
+              '<input type="number" class="e-nopay" placeholder="0"' +
+              ' oninput="updateCalculations(' + n + ')"></div>' +
+            '<div class="form-group"><label>OT Rate (1h)</label>' +
+              '<input type="number" class="e-otr" placeholder="0.00"' +
+              ' onchange="updateMonthStats()"></div>' +
+            '<div class="form-group"><label>Norm OT (Hrs)</label>' +
+              '<input type="number" class="e-noth" placeholder="0"' +
+              ' onchange="updateMonthStats()"></div>' +
+            '<div class="form-group"><label>D.OT Rate</label>' +
+              '<input type="number" class="e-dotr" placeholder="437.50"' +
+              ' onchange="updateMonthStats()"></div>' +
+            '<div class="form-group"><label>Double OT (Hrs)</label>' +
+              '<input type="number" class="e-doth" placeholder="0"' +
+              ' onchange="updateMonthStats()"></div>' +
+          '</div>' +
+
+          '<div class="grid-main" style="margin-top:15px;">' +
+            '<div>' +
+              '<label style="display:flex;justify-content:space-between;align-items:center;">' +
+                '<span>Allowances (+)</span>' +
+                '<button class="btn-plus"' +
+                ' onclick="addDynamicRow(\'earn_box_' + n + '\',\'earn_amt\',allowOptions)">+ Add</button>' +
+              '</label>' +
+              '<div id="earn_box_' + n + '"></div>' +
+            '</div>' +
+            '<div>' +
+              '<label style="display:flex;justify-content:space-between;align-items:center;">' +
+                '<span>Deductions (-)</span>' +
+                '<button class="btn-plus" style="background:var(--danger)"' +
+                ' onclick="addDynamicRow(\'ded_box_' + n + '\',\'ded_amt\',dedOptions)">+ Add</button>' +
+              '</label>' +
+              '<div id="ded_box_' + n + '">' +
+                '<div class="row-item">' +
+                  '<span style="flex:2;color:var(--text-secondary);font-size:13px;">EPF Employee (8%)</span>' +
+                  '<input type="number" class="ded_amt_epf" id="epf_val_' + n + '"' +
+                  ' placeholder="0.00" style="flex:1;" readonly>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
   }).join('');
-  [1,2].forEach(function(n){populateBankDropdown('e-bank-'+n);});
+
+  [1,2].forEach(function(n){ populateBankDropdown('e-bank-' + n); });
   populatePayrollDatalist();
 }
-function onEmpTypeChange(idx){updateCalculations(idx);updateMonthStats();}
-function updateCalculations(idx){
-  var card=document.getElementById('emp_row_'+idx);
-  var basic=parseFloat(card.querySelector('.e-basic').value)||0;
-  var nopay=parseFloat(card.querySelector('.e-nopay').value)||0;
-  var adjusted=basic-(basic/30)*nopay;
-  var casual=isCasualCard(card);
-  card.querySelector('.e-otr').value=basic>0?(basic/200*1.5).toFixed(2):'';
-  var epfEl=document.getElementById('epf_val_'+idx);
-  if(epfEl)epfEl.value=casual?'0.00':(adjusted*0.08).toFixed(2);
+
+/* ══════════════════════════════════════════════════════════
+   PAYROLL FORM — HELPERS
+   ══════════════════════════════════════════════════════════ */
+function onEmpTypeChange(idx) {
+  updateCalculations(idx);
   updateMonthStats();
 }
-function addDynamicRow(cid,cls,opts,val,lbl){
-  val=val||0;lbl=lbl||'';
-  var div=document.createElement('div');div.className='row-item';
-  div.innerHTML='<select style="flex:2;padding:10px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:8px;color:var(--input-text);font-size:13px;">'+opts.map(function(o){return '<option'+(o===lbl?' selected':'')+'>'+o+'</option>';}).join('')+'</select><input type="number" class="'+cls+'" value="'+val+'" placeholder="0.00" style="flex:1;padding:10px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:8px;color:var(--input-text);" onchange="updateMonthStats()"><button class="btn-rem" onclick="this.parentElement.remove();updateMonthStats();">×</button>';
-  document.getElementById(cid).appendChild(div);updateMonthStats();
+function updateCalculations(idx) {
+  var card   = document.getElementById('emp_row_' + idx);
+  var basic  = parseFloat(card.querySelector('.e-basic').value) || 0;
+  var nopay  = parseFloat(card.querySelector('.e-nopay').value) || 0;
+  var adj    = basic - (basic / 30) * nopay;
+  var casual = isCasualCard(card);
+  card.querySelector('.e-otr').value = basic > 0 ? (basic / 200 * 1.5).toFixed(2) : '';
+  var epfEl = document.getElementById('epf_val_' + idx);
+  if (epfEl) epfEl.value = casual ? '0.00' : (adj * 0.08).toFixed(2);
+  updateMonthStats();
 }
-function populatePayrollDatalist(){
-  var d=document.getElementById('masterList');if(d)d.remove();
-  d=document.createElement('datalist');d.id='masterList';
-  masterEmployees.forEach(function(e){var o=document.createElement('option');o.value=e.name;d.appendChild(o);});
+function addDynamicRow(cid, cls, opts, val, lbl) {
+  val = val || 0; lbl = lbl || '';
+  var div = document.createElement('div');
+  div.className = 'row-item';
+  div.innerHTML =
+    '<select style="flex:2;padding:10px;background:var(--input-bg);border:1px solid var(--input-border);' +
+    'border-radius:8px;color:var(--input-text);font-size:13px;">' +
+    opts.map(function(o){ return '<option' + (o === lbl ? ' selected' : '') + '>' + o + '</option>'; }).join('') +
+    '</select>' +
+    '<input type="number" class="' + cls + '" value="' + val + '" placeholder="0.00"' +
+    ' style="flex:1;padding:10px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:8px;color:var(--input-text);"' +
+    ' onchange="updateMonthStats()">' +
+    '<button class="btn-rem" onclick="this.parentElement.remove();updateMonthStats();">×</button>';
+  document.getElementById(cid).appendChild(div);
+  updateMonthStats();
+}
+function populatePayrollDatalist() {
+  var d = document.getElementById('masterList');
+  if (d) d.remove();
+  d = document.createElement('datalist');
+  d.id = 'masterList';
+  masterEmployees.forEach(function(e) {
+    var o = document.createElement('option');
+    o.value = e.name;
+    d.appendChild(o);
+  });
   document.body.appendChild(d);
 }
-function autoFillPayroll(inp,idx){
-  var e=masterEmployees.find(function(x){return x.name===inp.value;});if(!e)return;
-  var c=document.getElementById('emp_row_'+idx);
-  c.querySelector('.e-id').value=e.id;c.querySelector('.e-dept').value=e.dept||'';
-  c.querySelector('.e-desig').value=e.desig||'';c.querySelector('.e-roster').value=e.roster||'';
-  c.querySelector('.e-bank').value=e.bank||'';c.querySelector('.e-acc').value=e.acc||'';
-  c.querySelector('.e-branch').value=e.branch||'';c.querySelector('.e-emptype').value=e.emptype||'Permanent';
-  if(e.basic)c.querySelector('.e-basic').value=e.basic;
-  updateEmpIdDisplay(c.querySelector('.e-id'),idx);updateCalculations(idx);
+function autoFillPayroll(inp, idx) {
+  var e = masterEmployees.find(function(x){ return x.name === inp.value; });
+  if (!e) return;
+  var c = document.getElementById('emp_row_' + idx);
+  c.querySelector('.e-id').value      = e.id;
+  c.querySelector('.e-dept').value    = e.dept    || '';
+  c.querySelector('.e-desig').value   = e.desig   || '';
+  c.querySelector('.e-roster').value  = e.roster  || '';
+  c.querySelector('.e-bank').value    = e.bank    || '';
+  c.querySelector('.e-acc').value     = e.acc     || '';
+  c.querySelector('.e-branch').value  = e.branch  || '';
+  c.querySelector('.e-emptype').value = e.emptype || 'Permanent';
+  if (e.basic) c.querySelector('.e-basic').value = e.basic;
+
+  document.getElementById('earn_box_' + idx).innerHTML = '';
+  (e.fixEarns || []).forEach(function(a){
+    addDynamicRow('earn_box_' + idx, 'earn_amt', allowOptions, a.val, a.lbl);
+  });
+  var dedBox = document.getElementById('ded_box_' + idx);
+  dedBox.querySelectorAll('.row-item').forEach(function(r){ r.remove(); });
+  (e.fixDeds || []).forEach(function(d){
+    addDynamicRow('ded_box_' + idx, 'ded_amt', dedOptions, d.val, d.lbl);
+  });
+
+  updateEmpIdDisplay(c.querySelector('.e-id'), idx);
+  updateCalculations(idx);
 }
-function updateEmpIdDisplay(inp,idx){var el=document.querySelector('#emp_row_'+idx+' .emp-id-text');if(el)el.textContent=inp.value||'ID';}
-function toggleEmployee(cb,idx){document.getElementById('emp_row_'+idx).classList.toggle('inactive',!cb.checked);updateMonthStats();}
+function updateEmpIdDisplay(inp, idx) {
+  var el = document.querySelector('#emp_row_' + idx + ' .emp-id-text');
+  if (el) el.textContent = inp.value || 'ID';
+}
+function toggleEmployee(cb, idx) {
+  document.getElementById('emp_row_' + idx).classList.toggle('inactive', !cb.checked);
+  updateMonthStats();
+}
 
 /* ══════════════════════════════════════════════════════════
    PAYROLL SAVE / UPDATE
    ══════════════════════════════════════════════════════════ */
-function saveData(){
-  if(currentEditId!==null){updateData();return;}
-  var m=document.getElementById('globalMonth').value,d=document.getElementById('globalDate').value;
-  var batch=collectFormData();if(batch.length===0)return alert("No active employee data to save.");
-  db.ref('payroll_history').push({month:m,date:d,employees:batch});
-  alert("Saved successfully!");clearForm();
+function saveData() {
+  if (currentEditId !== null) { updateData(); return; }
+  var m = document.getElementById('globalMonth').value;
+  var d = document.getElementById('globalDate').value;
+  var batch = collectFormData();
+  if (batch.length === 0) return alert("No active employee data to save.");
+  db.ref('payroll_history').push({month: m, date: d, employees: batch});
+  alert("Saved successfully!");
+  clearForm();
 }
-function updateData(){
-  if(currentEditId===null){alert("No record loaded for editing.");return;}
-  var m=document.getElementById('globalMonth').value,d=document.getElementById('globalDate').value;
-  var slot1=document.getElementById('emp_row_1');
-  if(!slot1||slot1.classList.contains('inactive'))return alert("Slot 1 has no data.");
-  var earns=[],deds=[];
-  slot1.querySelectorAll('.earn_amt').forEach(function(a){earns.push({lbl:a.parentElement.querySelector('select').value,val:a.value});});
-  slot1.querySelectorAll('.ded_amt').forEach(function(x){deds.push({lbl:x.parentElement.querySelector('select').value,val:x.value});});
-  var updated={name:slot1.querySelector('.e-name').value,id:slot1.querySelector('.e-id').value,dept:slot1.querySelector('.e-dept').value,desig:slot1.querySelector('.e-desig').value,roster:slot1.querySelector('.e-roster').value,bank:slot1.querySelector('.e-bank').value,acc:slot1.querySelector('.e-acc').value,branch:slot1.querySelector('.e-branch').value,emptype:slot1.querySelector('.e-emptype').value,basic:slot1.querySelector('.e-basic').value,expd:slot1.querySelector('.e-expd').value,actd:slot1.querySelector('.e-actd').value,nopay:slot1.querySelector('.e-nopay').value,otr:slot1.querySelector('.e-otr').value,noth:slot1.querySelector('.e-noth').value,dotr:slot1.querySelector('.e-dotr').value,doth:slot1.querySelector('.e-doth').value,earns:earns,deds:deds,epf8:slot1.querySelector('.ded_amt_epf')?slot1.querySelector('.ded_amt_epf').value:'0'};
-  var nnp=calcNetPay(updated);updated.netPay=nnp.toFixed(2);
-  var fbKey=currentEditId,empIdx=currentEditEmpIndex,base='payroll_history/'+fbKey;
-  var writes={};writes[base+'/employees/'+empIdx]=updated;writes[base+'/month']=m;writes[base+'/date']=d;
-  db.ref().update(writes,function(err){
-    if(err){alert("Update failed: "+err.message);return;}
-    var rowId=fbKey+'_'+empIdx;
-    var ri=payrollResults.findIndex(function(r){return r.rowId===rowId;});
-    if(ri!==-1){payrollResults[ri]=Object.assign({},updated,{firebaseKey:fbKey,empIndex:empIdx,rowId:rowId,netPay:nnp.toFixed(2),month:m,date:d});}
-    var row=document.querySelector('#results-body [data-key="'+rowId+'"]');
-    if(row)row.querySelector('.net-pay-cell').textContent=nnp.toFixed(2);
-    updateMonthStats();buildMonthlyChart();alert("Updated successfully!");resetEditMode();
+function updateData() {
+  if (currentEditId === null) { alert("No record loaded for editing."); return; }
+  var m    = document.getElementById('globalMonth').value;
+  var d    = document.getElementById('globalDate').value;
+  var slot1 = document.getElementById('emp_row_1');
+  if (!slot1 || slot1.classList.contains('inactive'))
+    return alert("Slot 1 has no data.");
+
+  var earns = [], deds = [];
+  slot1.querySelectorAll('.earn_amt').forEach(function(a){
+    earns.push({lbl: a.parentElement.querySelector('select').value, val: a.value});
+  });
+  slot1.querySelectorAll('.ded_amt').forEach(function(x){
+    deds.push({lbl: x.parentElement.querySelector('select').value, val: x.value});
+  });
+
+  var updated = {
+    name:    slot1.querySelector('.e-name').value,
+    id:      slot1.querySelector('.e-id').value,
+    dept:    slot1.querySelector('.e-dept').value,
+    desig:   slot1.querySelector('.e-desig').value,
+    roster:  slot1.querySelector('.e-roster').value,
+    bank:    slot1.querySelector('.e-bank').value,
+    acc:     slot1.querySelector('.e-acc').value,
+    branch:  slot1.querySelector('.e-branch').value,
+    emptype: slot1.querySelector('.e-emptype').value,
+    basic:   slot1.querySelector('.e-basic').value,
+    expd:    slot1.querySelector('.e-expd').value,
+    actd:    slot1.querySelector('.e-actd').value,
+    nopay:   slot1.querySelector('.e-nopay').value,
+    otr:     slot1.querySelector('.e-otr').value,
+    noth:    slot1.querySelector('.e-noth').value,
+    dotr:    slot1.querySelector('.e-dotr').value,
+    doth:    slot1.querySelector('.e-doth').value,
+    earns:   earns,
+    deds:    deds,
+    epf8:    slot1.querySelector('.ded_amt_epf') ?
+             slot1.querySelector('.ded_amt_epf').value : '0'
+  };
+
+  var nnp = calcNetPay(updated);
+  updated.netPay = nnp.toFixed(2);
+
+  var fbKey  = currentEditId;
+  var empIdx = currentEditEmpIndex;
+  var base   = 'payroll_history/' + fbKey;
+  var writes = {};
+  writes[base + '/employees/' + empIdx] = updated;
+  writes[base + '/month'] = m;
+  writes[base + '/date']  = d;
+
+  db.ref().update(writes, function(err) {
+    if (err) { alert("Update failed: " + err.message); return; }
+    var rowId = fbKey + '_' + empIdx;
+    var ri = payrollResults.findIndex(function(r){ return r.rowId === rowId; });
+    if (ri !== -1) {
+      payrollResults[ri] = Object.assign({}, updated, {
+        firebaseKey: fbKey, empIndex: empIdx,
+        rowId: rowId, netPay: nnp.toFixed(2),
+        month: m, date: d
+      });
+    }
+    var row = document.querySelector('#results-body [data-key="' + rowId + '"]');
+    if (row) row.querySelector('.net-pay-cell').textContent = nnp.toFixed(2);
+    updateMonthStats();
+    buildMonthlyChart();
+    updateResultsSummaryBar();
+    alert("Updated successfully!");
+    resetEditMode();
   });
 }
-function collectFormData(){
-  var batch=[];
-  document.querySelectorAll('.employee-card:not(.inactive)').forEach(function(c){
-    var earns=[],deds=[];
-    c.querySelectorAll('.earn_amt').forEach(function(a){earns.push({lbl:a.parentElement.querySelector('select').value,val:a.value});});
-    c.querySelectorAll('.ded_amt').forEach(function(x){deds.push({lbl:x.parentElement.querySelector('select').value,val:x.value});});
-    batch.push({name:c.querySelector('.e-name').value,id:c.querySelector('.e-id').value,dept:c.querySelector('.e-dept').value,desig:c.querySelector('.e-desig').value,roster:c.querySelector('.e-roster').value,bank:c.querySelector('.e-bank').value,acc:c.querySelector('.e-acc').value,branch:c.querySelector('.e-branch').value,emptype:c.querySelector('.e-emptype').value,basic:c.querySelector('.e-basic').value,expd:c.querySelector('.e-expd').value,actd:c.querySelector('.e-actd').value,nopay:c.querySelector('.e-nopay').value,otr:c.querySelector('.e-otr').value,noth:c.querySelector('.e-noth').value,dotr:c.querySelector('.e-dotr').value,doth:c.querySelector('.e-doth').value,earns:earns,deds:deds,epf8:c.querySelector('.ded_amt_epf').value});
+function collectFormData() {
+  var batch = [];
+  document.querySelectorAll('.employee-card:not(.inactive)').forEach(function(c) {
+    var earns = [], deds = [];
+    c.querySelectorAll('.earn_amt').forEach(function(a){
+      earns.push({lbl: a.parentElement.querySelector('select').value, val: a.value});
+    });
+    c.querySelectorAll('.ded_amt').forEach(function(x){
+      deds.push({lbl: x.parentElement.querySelector('select').value, val: x.value});
+    });
+    batch.push({
+      name:    c.querySelector('.e-name').value,
+      id:      c.querySelector('.e-id').value,
+      dept:    c.querySelector('.e-dept').value,
+      desig:   c.querySelector('.e-desig').value,
+      roster:  c.querySelector('.e-roster').value,
+      bank:    c.querySelector('.e-bank').value,
+      acc:     c.querySelector('.e-acc').value,
+      branch:  c.querySelector('.e-branch').value,
+      emptype: c.querySelector('.e-emptype').value,
+      basic:   c.querySelector('.e-basic').value,
+      expd:    c.querySelector('.e-expd').value,
+      actd:    c.querySelector('.e-actd').value,
+      nopay:   c.querySelector('.e-nopay').value,
+      otr:     c.querySelector('.e-otr').value,
+      noth:    c.querySelector('.e-noth').value,
+      dotr:    c.querySelector('.e-dotr').value,
+      doth:    c.querySelector('.e-doth').value,
+      earns:   earns,
+      deds:    deds,
+      epf8:    c.querySelector('.ded_amt_epf') ?
+               c.querySelector('.ded_amt_epf').value : '0'
+    });
   });
   return batch;
 }
-function resetEditMode(){currentEditId=null;currentEditEmpIndex=null;_editEmp=null;hideBanner();clearForm();}
-function cancelEditMode(){resetEditMode();}
-function showBanner(lbl){document.getElementById('edit-mode-label').textContent=lbl;document.getElementById('edit-mode-banner').classList.add('visible');document.getElementById('btn-save-main').style.display='none';document.getElementById('btn-update-main').style.display='flex';}
-function hideBanner(){document.getElementById('edit-mode-banner').classList.remove('visible');document.getElementById('btn-save-main').style.display='flex';document.getElementById('btn-update-main').style.display='none';}
-function clearForm(){document.getElementById('globalMonth').value='';document.getElementById('globalDate').value='';renderEmployees();updateMonthStats();}
+function resetEditMode() {
+  currentEditId = null; currentEditEmpIndex = null; _editEmp = null;
+  hideBanner(); clearForm();
+}
+function cancelEditMode() { resetEditMode(); }
+function showBanner(lbl) {
+  document.getElementById('edit-mode-label').textContent = lbl;
+  document.getElementById('edit-mode-banner').classList.add('visible');
+  document.getElementById('btn-save-main').style.display   = 'none';
+  document.getElementById('btn-update-main').style.display = 'flex';
+}
+function hideBanner() {
+  document.getElementById('edit-mode-banner').classList.remove('visible');
+  document.getElementById('btn-save-main').style.display   = 'flex';
+  document.getElementById('btn-update-main').style.display = 'none';
+}
+function clearForm() {
+  document.getElementById('globalMonth').value = '';
+  document.getElementById('globalDate').value  = '';
+  renderEmployees();
+  updateMonthStats();
+}
 
 /* ══════════════════════════════════════════════════════════
    DASHBOARD FILTER HELPERS
-   (These are called from the filter bar HTML above)
    ══════════════════════════════════════════════════════════ */
-
-/**
- * Returns the current active filter as an object:
- *   { mode: 'month',  value: 'YYYY-MM'             }
- *   { mode: 'range',  start: 'YYYY-MM-DD', end: '' }
- *   { mode: 'none'                                  }
- *
- * Priority: date range wins over month picker.
- */
-function getDashFilter(){
+function getDashFilter() {
   var mf = document.getElementById('dashMonthFilter');
   var sd = document.getElementById('dashStartDate');
   var ed = document.getElementById('dashEndDate');
   var startVal = sd ? sd.value : '';
   var endVal   = ed ? ed.value : '';
   var monthVal = mf ? mf.value : '';
-
-  if(startVal || endVal){
-    return {mode:'range', start:startVal, end:endVal};
-  }
-  if(monthVal){
-    return {mode:'month', value:monthVal};
-  }
+  if (startVal || endVal) return {mode:'range', start:startVal, end:endVal};
+  if (monthVal)           return {mode:'month', value:monthVal};
   return {mode:'none'};
 }
 
-/**
- * Returns true if the payroll record passes the currently active filter.
- * emp.month  = "YYYY-MM"
- * emp.date   = "YYYY-MM-DD"  (may be empty string)
- */
-function empPassesFilter(emp){
+function empPassesFilter(emp) {
   var f = getDashFilter();
-
-  if(f.mode === 'month'){
-    /* Match on month key stored with the record */
-    var empMonth = emp.month || (emp.date ? emp.date.substring(0,7) : '');
-    return empMonth === f.value;
+  if (f.mode === 'month') {
+    var em = emp.month || (emp.date ? emp.date.substring(0,7) : '');
+    return em === f.value;
   }
-
-  if(f.mode === 'range'){
-    /* Use emp.date if available, otherwise pad emp.month to first of month */
-    var empDate = emp.date || '';
-    if(!empDate && emp.month) empDate = emp.month + '-01';
-    if(!empDate) return false;          /* no date at all — exclude */
-    if(f.start && empDate < f.start) return false;
-    if(f.end   && empDate > f.end  ) return false;
+  if (f.mode === 'range') {
+    var ed = emp.date || '';
+    if (!ed && emp.month) ed = emp.month + '-01';
+    if (!ed) return false;
+    if (f.start && ed < f.start) return false;
+    if (f.end   && ed > f.end  ) return false;
     return true;
   }
-
-  /* mode === 'none' → include everything */
   return true;
 }
 
-/** Called by both filter inputs whenever their value changes. */
-function onDashFilterChange(){
-  /*
-   * Mutual-exclusivity: if the user types in the month picker,
-   * clear the date range — and vice-versa.
-   */
+function onDashFilterChange() {
   var mf = document.getElementById('dashMonthFilter');
   var sd = document.getElementById('dashStartDate');
   var ed = document.getElementById('dashEndDate');
-
-  if(document.activeElement === mf){
-    /* Month picker was just changed — clear range */
-    if(sd) sd.value = '';
-    if(ed) ed.value = '';
+  if (document.activeElement === mf) {
+    if (sd) sd.value = '';
+    if (ed) ed.value = '';
   } else {
-    /* Date range input was just changed — clear month picker */
-    if(mf) mf.value = '';
+    if (mf) mf.value = '';
   }
-
   updateMonthStats();
   buildMonthlyChart();
 }
 
-/** Resets all three filter inputs to default (current month). */
-function clearDashFilters(){
+function clearDashFilters() {
   var now = new Date();
   var cur = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
-  var mf = document.getElementById('dashMonthFilter');
-  var sd = document.getElementById('dashStartDate');
-  var ed = document.getElementById('dashEndDate');
-  if(mf) mf.value = cur;
-  if(sd) sd.value = '';
-  if(ed) ed.value = '';
+  var mf  = document.getElementById('dashMonthFilter');
+  var sd  = document.getElementById('dashStartDate');
+  var ed  = document.getElementById('dashEndDate');
+  if (mf) mf.value = cur;
+  if (sd) sd.value = '';
+  if (ed) ed.value = '';
   updateMonthStats();
   buildMonthlyChart();
 }
 
 /* ══════════════════════════════════════════════════════════
-   ★ DASHBOARD STATS — rewritten to respect the filter bar
+   DASHBOARD STATS  (fix 1: Grand Total = Net Pay + Advances)
    ══════════════════════════════════════════════════════════ */
-function updateMonthStats(){
-  /* Active employee count on payroll form (always live from form) */
+function updateMonthStats() {
   var ac = document.querySelectorAll('.employee-card:not(.inactive)').length;
   document.getElementById('stat-emp').innerText = ac;
 
-  /* Determine the filter in effect */
-  var f = getDashFilter();
-
-  /* Human-readable label for the stat-month box and the active-filter pill */
-  var monthLabel = '-';
-  if(f.mode === 'month'){
+  var f           = getDashFilter();
+  var monthLabel  = '-';
+  if (f.mode === 'month') {
     var parts = f.value.split('-');
-    var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, 1);
-    monthLabel = d.toLocaleDateString('en-US', {month:'long', year:'numeric'});
-  } else if(f.mode === 'range'){
+    var dd    = new Date(parseInt(parts[0]), parseInt(parts[1])-1, 1);
+    monthLabel = dd.toLocaleDateString('en-US', {month:'long', year:'numeric'});
+  } else if (f.mode === 'range') {
     monthLabel = (f.start || '…') + ' → ' + (f.end || '…');
   } else {
     monthLabel = 'All';
   }
   document.getElementById('stat-month').innerText = monthLabel;
 
-  /* Update the active-filter indicator pill */
   var pill = document.getElementById('dashActiveFilterLabel');
-  if(pill){
-    if(f.mode !== 'none'){
+  if (pill) {
+    if (f.mode !== 'none') {
       pill.textContent = '🔍 ' + monthLabel;
       pill.style.display = 'inline-flex';
     } else {
@@ -1010,587 +1650,709 @@ function updateMonthStats(){
     }
   }
 
-  /* Filter payrollResults and compute totals */
-  var totalNet = 0, totalAdvances = 0, totalNormOT = 0;
-
-  payrollResults.forEach(function(r){
-    if(!empPassesFilter(r)) return;   /* ← skip records outside the filter */
-
-    totalNet += parseFloat(r.netPay) || 0;
-
-    /* Advances: any deduction labelled with "advance" */
-    (r.deds || []).forEach(function(d){
-      if((d.lbl || '').toLowerCase().indexOf('advance') !== -1){
-        totalAdvances += parseFloat(d.val) || 0;
-      }
-    });
-
-    /* Normal OT = noth × otr */
+  var totalNet = 0, totalAdv = 0, totalNormOT = 0, totalEPF = 0;
+  payrollResults.forEach(function(r) {
+    if (!empPassesFilter(r)) return;
+    totalNet    += parseFloat(r.netPay) || 0;
     totalNormOT += (parseFloat(r.noth) || 0) * (parseFloat(r.otr) || 0);
+    var basic  = parseFloat(r.basic) || 0;
+    var nopay  = parseFloat(r.nopay) || 0;
+    var adj    = basic - (basic/30)*nopay;
+    var casual = (r.emptype === 'Casual');
+    if (!casual) totalEPF += adj * 0.08;
+    (r.deds || []).forEach(function(d) {
+      if ((d.lbl || '').toLowerCase().indexOf('advance') !== -1)
+        totalAdv += parseFloat(d.val) || 0;
+    });
   });
 
-  document.getElementById('stat-total').innerText    = 'LKR ' + totalNet.toFixed(2);
-  document.getElementById('stat-advances').innerText = 'LKR ' + totalAdvances.toFixed(2);
-  document.getElementById('stat-normalot').innerText = 'LKR ' + totalNormOT.toFixed(2);
+  var grandTotal = totalNet + totalAdv;
+
+  document.getElementById('stat-total').innerText      = 'LKR ' + totalNet.toFixed(2);
+  document.getElementById('stat-advances').innerText   = 'LKR ' + totalAdv.toFixed(2);
+  document.getElementById('stat-normalot').innerText   = 'LKR ' + totalNormOT.toFixed(2);
+  document.getElementById('stat-epf').innerText        = 'LKR ' + totalEPF.toFixed(2);
+  document.getElementById('stat-grandtotal').innerText = 'LKR ' + grandTotal.toFixed(2);
 }
 
 /* ══════════════════════════════════════════════════════════
-   ★ MONTHLY BAR CHART — respects the active filter
+   MONTHLY BAR CHART
    ══════════════════════════════════════════════════════════ */
-function buildMonthlyChart(){
+function buildMonthlyChart() {
   var canvas = document.getElementById('monthlyChart');
-  if(!canvas || typeof Chart === 'undefined') return;
+  if (!canvas || typeof Chart === 'undefined') return;
 
-  /* Only chart records that pass the current filter */
   var monthMap = {};
-  payrollResults.forEach(function(r){
-    if(!empPassesFilter(r)) return;
+  payrollResults.forEach(function(r) {
+    if (!empPassesFilter(r)) return;
     var key = r.month || 'Unknown';
     monthMap[key] = (monthMap[key] || 0) + (parseFloat(r.netPay) || 0);
   });
 
   var labels = Object.keys(monthMap).sort();
   var values = labels.map(function(k){ return parseFloat(monthMap[k].toFixed(2)); });
-
-  var prettyLabels = labels.map(function(k){
-    if(!k || k === 'Unknown') return 'Unknown';
+  var prettyLabels = labels.map(function(k) {
+    if (!k || k === 'Unknown') return 'Unknown';
     var pts = k.split('-');
-    if(pts.length < 2) return k;
+    if (pts.length < 2) return k;
     var d = new Date(parseInt(pts[0]), parseInt(pts[1])-1, 1);
     return d.toLocaleDateString('en-US', {month:'short', year:'numeric'});
   });
 
-  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  var isDark     = document.documentElement.getAttribute('data-theme') === 'dark';
   var gridColor  = isDark ? 'rgba(96,165,250,.1)' : 'rgba(30,58,95,.08)';
   var labelColor = isDark ? '#94a3b8' : '#64748b';
 
-  if(payrollChart){ payrollChart.destroy(); payrollChart = null; }
+  if (payrollChart) { payrollChart.destroy(); payrollChart = null; }
 
   payrollChart = new Chart(canvas, {
-    type:'bar',
-    data:{
+    type: 'bar',
+    data: {
       labels: prettyLabels,
-      datasets:[{
-        label:'Net Pay (LKR)',
+      datasets: [{
+        label: 'Net Pay (LKR)',
         data: values,
-        backgroundColor:'rgba(59,130,246,0.75)',
-        borderColor:'rgba(96,165,250,1)',
-        borderWidth:1.5,
-        borderRadius:6,
-        borderSkipped:false
+        backgroundColor: 'rgba(59,130,246,0.75)',
+        borderColor: 'rgba(96,165,250,1)',
+        borderWidth: 1.5,
+        borderRadius: 6,
+        borderSkipped: false
       }]
     },
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        tooltip:{callbacks:{label:function(ctx){return ' LKR '+ctx.parsed.y.toLocaleString('en-US',{minimumFractionDigits:2});}}}
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {display: false},
+        tooltip: {callbacks: {label: function(ctx){
+          return ' LKR ' + ctx.parsed.y.toLocaleString('en-US',
+            {minimumFractionDigits:2});
+        }}}
       },
-      scales:{
-        x:{grid:{color:gridColor},ticks:{color:labelColor,font:{size:11}}},
-        y:{grid:{color:gridColor},ticks:{color:labelColor,font:{size:11},callback:function(v){return 'LKR '+v.toLocaleString();}},beginAtZero:true}
+      scales: {
+        x: {grid:{color:gridColor}, ticks:{color:labelColor, font:{size:11}}},
+        y: {
+          grid: {color:gridColor},
+          ticks: {color:labelColor, font:{size:11},
+            callback: function(v){ return 'LKR ' + v.toLocaleString(); }},
+          beginAtZero: true
+        }
       }
     }
   });
 }
 
 /* ══════════════════════════════════════════════════════════
-   ★ FINAL RESULTS — with Monthly Grouping support
+   FINAL RESULTS — SUMMARY BAR
    ══════════════════════════════════════════════════════════ */
-function renderFinalResults(){
-  var tbody=document.getElementById('results-body');if(!tbody)return;tbody.innerHTML='';
-  if(payrollResults.length===0){
-    tbody.innerHTML='<div style="text-align:center;padding:30px;color:var(--text-secondary);">No results found.</div>';return;
-  }
+function updateResultsSummaryBar() {
+  var totalNet = 0, totalAdv = 0, count = 0;
+  payrollResults.forEach(function(r) {
+    totalNet += parseFloat(r.netPay) || 0;
+    count++;
+    (r.deds || []).forEach(function(d) {
+      if ((d.lbl || '').toLowerCase().indexOf('advance') !== -1)
+        totalAdv += parseFloat(d.val) || 0;
+    });
+  });
+  var n = document.getElementById('res-sum-net');
+  var a = document.getElementById('res-sum-adv');
+  var c = document.getElementById('res-sum-count');
+  if (n) n.textContent = 'LKR ' + totalNet.toFixed(2);
+  if (a) a.textContent = 'LKR ' + totalAdv.toFixed(2);
+  if (c) c.textContent = count;
+}
 
-  var groupByMonth=document.getElementById('groupByMonthToggle')&&document.getElementById('groupByMonthToggle').checked;
+/* ══════════════════════════════════════════════════════════
+   FINAL RESULTS — RENDER (with monthly grouping)
+   fix 2: Select All only applies to visible rows
+   ══════════════════════════════════════════════════════════ */
+function renderFinalResults() {
+  var tbody = document.getElementById('results-body');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  updateResultsSummaryBar();
 
-  if(!groupByMonth){
-    payrollResults.forEach(function(emp){appendResultRow(tbody,emp);});
+  if (payrollResults.length === 0) {
+    tbody.innerHTML =
+      '<div style="text-align:center;padding:30px;color:var(--text-secondary);">' +
+      'No results found.</div>';
     return;
   }
 
-  var groups={};
-  payrollResults.forEach(function(emp){
-    var key=emp.month||'Unknown';
-    if(!groups[key])groups[key]=[];
+  var groupByMonth = document.getElementById('groupByMonthToggle') &&
+                     document.getElementById('groupByMonthToggle').checked;
+
+  if (!groupByMonth) {
+    payrollResults.forEach(function(emp){ appendResultRow(tbody, emp); });
+    return;
+  }
+
+  var groups = {};
+  payrollResults.forEach(function(emp) {
+    var key = emp.month || 'Unknown';
+    if (!groups[key]) groups[key] = [];
     groups[key].push(emp);
   });
 
-  var sortedKeys=Object.keys(groups).sort();
-
-  sortedKeys.forEach(function(monthKey){
-    var emps=groups[monthKey];
-    var groupTotal=emps.reduce(function(s,e){return s+(parseFloat(e.netPay)||0);},0);
-    var prettyMonth=monthKey;
-    if(monthKey&&monthKey!=='Unknown'){
-      var parts=monthKey.split('-');
-      if(parts.length>=2){
-        var d=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1);
-        prettyMonth=d.toLocaleDateString('en-US',{month:'long',year:'numeric'}).toUpperCase();
+  Object.keys(groups).sort().forEach(function(monthKey) {
+    var emps       = groups[monthKey];
+    var groupTotal = emps.reduce(function(s,e){ return s + (parseFloat(e.netPay)||0); }, 0);
+    var prettyMonth = monthKey;
+    if (monthKey && monthKey !== 'Unknown') {
+      var parts = monthKey.split('-');
+      if (parts.length >= 2) {
+        var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, 1);
+        prettyMonth = d.toLocaleDateString('en-US',
+          {month:'long',year:'numeric'}).toUpperCase();
       }
     }
-    var header=document.createElement('div');
-    header.className='month-group-header';
-    header.setAttribute('data-group-key',monthKey);
-    header.innerHTML=
-      '<span class="group-toggle-icon">▼</span>'+
-      '<span class="group-month-label">📅 '+escHtml(prettyMonth)+'</span>'+
-      '<span class="group-meta">'+emps.length+' employee'+(emps.length!==1?'s':'')+' &nbsp;|&nbsp; LKR '+groupTotal.toFixed(2)+'</span>';
-    var rowsWrap=document.createElement('div');
-    rowsWrap.className='month-group-rows';
-    rowsWrap.setAttribute('data-group-rows',monthKey);
-    header.addEventListener('click',function(){
-      var collapsed=header.classList.toggle('collapsed');
-      rowsWrap.style.display=collapsed?'none':'';
+
+    var header = document.createElement('div');
+    header.className = 'month-group-header';
+    header.setAttribute('data-group-key', monthKey);
+    header.innerHTML =
+      '<span class="group-toggle-icon">▼</span>' +
+      '<span class="group-month-label">📅 ' + escHtml(prettyMonth) + '</span>' +
+      '<span class="group-meta">' + emps.length +
+        ' employee' + (emps.length !== 1 ? 's' : '') +
+        ' &nbsp;|&nbsp; LKR ' + groupTotal.toFixed(2) + '</span>';
+
+    var rowsWrap = document.createElement('div');
+    rowsWrap.className = 'month-group-rows';
+    rowsWrap.setAttribute('data-group-rows', monthKey);
+
+    header.addEventListener('click', function() {
+      var collapsed = header.classList.toggle('collapsed');
+      rowsWrap.style.display = collapsed ? 'none' : '';
     });
-    emps.forEach(function(emp){appendResultRow(rowsWrap,emp);});
+
+    emps.forEach(function(emp){ appendResultRow(rowsWrap, emp); });
     tbody.appendChild(header);
     tbody.appendChild(rowsWrap);
   });
 }
 
-function appendResultRow(container,emp){
-  var rowId=emp.rowId||(Math.random().toString(36).substr(2,9));
-  var div=document.createElement('div');div.className='results-row';div.setAttribute('data-key',rowId);
-  div.innerHTML=
-    '<div><input type="checkbox" class="row-checkbox"></div>'+
-    '<div>'+escHtml(emp.id||'')+'</div>'+
-    '<div>'+escHtml(emp.name||'')+'</div>'+
-    '<div>'+escHtml(emp.bank||'')+'</div>'+
-    '<div>'+escHtml(emp.branch||'')+'</div>'+
-    '<div>'+escHtml(emp.acc||'')+'</div>'+
-    '<div class="net-pay-cell">'+escHtml(emp.netPay||'0')+'</div>'+
-    '<input type="hidden" class="row-month-val" value="'+escHtml(emp.month||'')+'">'+
-    '<div style="text-align:right;">'+
-      '<button class="btn-small btn-plus" onclick="loadResultIntoPayrollForm(\''+rowId+'\')">Edit</button>'+
-      '<button class="btn-small btn-rem" onclick="deleteRow(this)">X</button>'+
+function appendResultRow(container, emp) {
+  var rowId = emp.rowId || (Math.random().toString(36).substr(2,9));
+  var div   = document.createElement('div');
+  div.className = 'results-row';
+  div.setAttribute('data-key', rowId);
+  div.innerHTML =
+    '<div><input type="checkbox" class="row-checkbox"></div>' +
+    '<div>' + escHtml(emp.id   || '') + '</div>' +
+    '<div>' + escHtml(emp.name || '') + '</div>' +
+    '<div>' + escHtml(emp.bank || '') + '</div>' +
+    '<div>' + escHtml(emp.branch|| '') + '</div>' +
+    '<div>' + escHtml(emp.acc  || '') + '</div>' +
+    '<div class="net-pay-cell">' + escHtml(emp.netPay || '0') + '</div>' +
+    '<input type="hidden" class="row-month-val" value="' + escHtml(emp.month||'') + '">' +
+    '<div style="text-align:right;">' +
+      '<button class="btn-small btn-plus"' +
+      ' onclick="loadResultIntoPayrollForm(\'' + rowId + '\')">Edit</button>' +
+      '<button class="btn-small btn-rem"' +
+      ' onclick="deleteRow(this)">X</button>' +
     '</div>';
   container.appendChild(div);
-}function loadResultIntoPayrollForm(rowId){
-  var emp=payrollResults.find(function(e){return e.rowId===rowId;});if(!emp){alert('Not found.');return;}
-  currentEditId=emp.firebaseKey;currentEditEmpIndex=emp.empIndex;_editEmp=emp;
-  document.querySelectorAll('.page-section').forEach(function(s){s.classList.add('hidden');});
-  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+}
+
+/* ── Select All — only targets VISIBLE rows (not inside collapsed groups) ── */
+function toggleSelectAllResults(masterCb) {
+  /* Get all checkboxes whose parent .results-row is actually visible */
+  var allCbs = document.querySelectorAll('#results-body .row-checkbox');
+  allCbs.forEach(function(cb) {
+    /* Walk up to see if it sits inside a collapsed group wrapper */
+    var row   = cb.closest('.results-row');
+    var wrap  = row ? row.closest('.month-group-rows') : null;
+    /* If there is no wrapping group, or the group is not hidden, apply the state */
+    if (!wrap || wrap.style.display !== 'none') {
+      cb.checked = masterCb.checked;
+    }
+  });
+}
+
+/* ── Load a result row into the payroll form for editing ── */
+function loadResultIntoPayrollForm(rowId) {
+  var emp = payrollResults.find(function(e){ return e.rowId === rowId; });
+  if (!emp) { alert('Not found.'); return; }
+  currentEditId       = emp.firebaseKey;
+  currentEditEmpIndex = emp.empIndex;
+  _editEmp            = emp;
+
+  document.querySelectorAll('.page-section').forEach(function(s){
+    s.classList.add('hidden');
+  });
+  document.querySelectorAll('.nav-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
   document.getElementById('page-payroll').classList.remove('hidden');
   document.getElementById('nav-payroll').classList.add('active');
+
   renderEmployees();
-  requestAnimationFrame(function(){requestAnimationFrame(function(){fillEditForm(emp);});});
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){ fillEditForm(emp); });
+  });
 }
-function fillEditForm(emp){
-  var idx=1,c=document.getElementById('emp_row_'+idx);if(!c)return;
-  var toggle=c.querySelector('input[type=checkbox]');if(toggle&&!toggle.checked){toggle.checked=true;c.classList.remove('inactive');}
-  c.querySelector('.e-name').value=emp.name||'';
-  c.querySelector('.e-id').value=emp.id||'';
-  c.querySelector('.e-dept').value=emp.dept||'';
-  c.querySelector('.e-desig').value=emp.desig||'';
-  c.querySelector('.e-roster').value=emp.roster||'';
-  c.querySelector('.e-acc').value=emp.acc||'';
-  c.querySelector('.e-branch').value=emp.branch||'';
-  c.querySelector('.e-emptype').value=emp.emptype||'Permanent';
-  c.querySelector('.e-basic').value=emp.basic||'';
-  c.querySelector('.e-expd').value=emp.expd||'';
-  c.querySelector('.e-actd').value=emp.actd||'';
-  c.querySelector('.e-nopay').value=emp.nopay||'';
-  c.querySelector('.e-otr').value=emp.otr||'';
-  c.querySelector('.e-noth').value=emp.noth||'';
-  c.querySelector('.e-dotr').value=emp.dotr||'';
-  c.querySelector('.e-doth').value=emp.doth||'';
-  var bs=c.querySelector('.e-bank');bs.value=emp.bank||'';
-  if(bs.value!==(emp.bank||'')){var opt=document.createElement('option');opt.value=emp.bank;opt.textContent=emp.bank;bs.appendChild(opt);bs.value=emp.bank;}
-  updateEmpIdDisplay(c.querySelector('.e-id'),idx);
-  document.getElementById('earn_box_'+idx).innerHTML='';
-  (emp.earns||[]).forEach(function(e){addDynamicRow('earn_box_'+idx,'earn_amt',allowOptions,e.val,e.lbl);});
-  document.getElementById('ded_box_'+idx).querySelectorAll('.row-item').forEach(function(r){r.remove();});
-  (emp.deds||[]).forEach(function(d){addDynamicRow('ded_box_'+idx,'ded_amt',dedOptions,d.val,d.lbl);});
-  if(emp.month)document.getElementById('globalMonth').value=emp.month;
-  if(emp.date)document.getElementById('globalDate').value=emp.date;
+
+function fillEditForm(emp) {
+  var idx = 1;
+  var c   = document.getElementById('emp_row_' + idx);
+  if (!c) return;
+  var toggle = c.querySelector('input[type=checkbox]');
+  if (toggle && !toggle.checked) { toggle.checked = true; c.classList.remove('inactive'); }
+
+  c.querySelector('.e-name').value   = emp.name   || '';
+  c.querySelector('.e-id').value     = emp.id     || '';
+  c.querySelector('.e-dept').value   = emp.dept   || '';
+  c.querySelector('.e-desig').value  = emp.desig  || '';
+  c.querySelector('.e-roster').value = emp.roster || '';
+  c.querySelector('.e-acc').value    = emp.acc    || '';
+  c.querySelector('.e-branch').value = emp.branch || '';
+  c.querySelector('.e-emptype').value= emp.emptype|| 'Permanent';
+  c.querySelector('.e-basic').value  = emp.basic  || '';
+  c.querySelector('.e-expd').value   = emp.expd   || '';
+  c.querySelector('.e-actd').value   = emp.actd   || '';
+  c.querySelector('.e-nopay').value  = emp.nopay  || '';
+  c.querySelector('.e-otr').value    = emp.otr    || '';
+  c.querySelector('.e-noth').value   = emp.noth   || '';
+  c.querySelector('.e-dotr').value   = emp.dotr   || '';
+  c.querySelector('.e-doth').value   = emp.doth   || '';
+
+  var bs = c.querySelector('.e-bank');
+  bs.value = emp.bank || '';
+  if (bs.value !== (emp.bank || '')) {
+    var opt = document.createElement('option');
+    opt.value = emp.bank; opt.textContent = emp.bank;
+    bs.appendChild(opt); bs.value = emp.bank;
+  }
+
+  updateEmpIdDisplay(c.querySelector('.e-id'), idx);
+
+  document.getElementById('earn_box_' + idx).innerHTML = '';
+  (emp.earns || []).forEach(function(e){
+    addDynamicRow('earn_box_' + idx, 'earn_amt', allowOptions, e.val, e.lbl);
+  });
+  document.getElementById('ded_box_' + idx).querySelectorAll('.row-item')
+    .forEach(function(r){ r.remove(); });
+  (emp.deds || []).forEach(function(d){
+    addDynamicRow('ded_box_' + idx, 'ded_amt', dedOptions, d.val, d.lbl);
+  });
+
+  if (emp.month) document.getElementById('globalMonth').value = emp.month;
+  if (emp.date)  document.getElementById('globalDate').value  = emp.date;
+
   updateCalculations(idx);
-  showBanner('Editing: '+(emp.name||emp.id));
+  showBanner('Editing: ' + (emp.name || emp.id));
 }
-function deleteRow(btn){
-  if(!confirm("Delete permanently?"))return;
-  var row=btn.closest('.results-row'),rowId=row.getAttribute('data-key');
-  var emp=payrollResults.find(function(e){return e.rowId===rowId;});
-  if(emp&&emp.firebaseKey&&db){
-    var fbKey=emp.firebaseKey,ei=emp.empIndex;
-    db.ref('payroll_history/'+fbKey).once('value',function(snap){
-      if(!snap.exists())return;
-      var batch=snap.val();
-      if(batch.employees&&batch.employees.length>1){batch.employees.splice(ei,1);db.ref('payroll_history/'+fbKey).set(batch);}
-      else{db.ref('payroll_history/'+fbKey).remove();}
+
+/* ── Delete a result row ── */
+function deleteRow(btn) {
+  if (!confirm("Delete permanently?")) return;
+  var row   = btn.closest('.results-row');
+  var rowId = row.getAttribute('data-key');
+  var emp   = payrollResults.find(function(e){ return e.rowId === rowId; });
+
+  if (emp && emp.firebaseKey && db) {
+    var fbKey = emp.firebaseKey, ei = emp.empIndex;
+    db.ref('payroll_history/' + fbKey).once('value', function(snap) {
+      if (!snap.exists()) return;
+      var batch = snap.val();
+      if (batch.employees && batch.employees.length > 1) {
+        batch.employees.splice(ei, 1);
+        db.ref('payroll_history/' + fbKey).set(batch);
+      } else {
+        db.ref('payroll_history/' + fbKey).remove();
+      }
     });
   }
-  payrollResults=payrollResults.filter(function(e){return e.rowId!==rowId;});
+
+  payrollResults = payrollResults.filter(function(e){ return e.rowId !== rowId; });
   row.remove();
   updateMonthStats();
   buildMonthlyChart();
-}
-function toggleSelectAllResults(cb){
-  document.querySelectorAll('#results-body .row-checkbox').forEach(function(c){c.checked=cb.checked;});
-}
-function exportSelectedRowsToExcel(){
-  var checked=document.querySelectorAll('#results-body .row-checkbox:checked');
-  if(checked.length===0)return alert("No employees selected!");
-  var wd=[["ID","Name","Bank Name","Branch","Account No","Net Pay"]];
-  checked.forEach(function(cb){
-    var row=cb.closest('.results-row'),cols=row.querySelectorAll('div');
-    wd.push([cols[1].textContent,cols[2].textContent,cols[3].textContent,cols[4].textContent,cols[5].textContent,cols[6].textContent]);
-  });
-  var wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(wd);
-  XLSX.utils.book_append_sheet(wb,ws,"Payroll");
-  XLSX.writeFile(wb,"Pavara_Payroll_Export.xlsx");
+  updateResultsSummaryBar();
 }
 
 /* ══════════════════════════════════════════════════════════
-   DASHBOARD — FILTER HELPERS
+   ENHANCED EXCEL EXPORT — horizontal detailed view
+   fix 3: ID, Name, Bank, Branch, Acc, Net Pay, Advance,
+          OT Pay, Total Working Days, 8% ETF, 12% EPF, 3% EPF,
+          No-Pay Count, Individual Allowances, Individual
+          Deductions, OT Count
    ══════════════════════════════════════════════════════════ */
+function exportSelectedRowsToExcel() {
+  var checked = document.querySelectorAll('#results-body .row-checkbox:checked');
+  if (checked.length === 0) return alert("No employees selected!");
 
-/**
- * Returns the current-month string in "YYYY-MM" format.
- * Used to set the default filter on load.
- */
-function getCurrentMonthValue(){
-  var now=new Date();
-  var mm=String(now.getMonth()+1).padStart(2,'0');
-  return now.getFullYear()+'-'+mm;
-}
-
-/**
- * Inject the Dashboard filter controls (month picker + date range)
- * into any element with id="dash-filter-bar".
- * Safe to call multiple times — skips if already built.
- */
-function buildDashFilterBar(){
-  var bar=document.getElementById('dash-filter-bar');
-  if(!bar||bar.dataset.built)return;
-  bar.dataset.built='1';
-
-  var cur=getCurrentMonthValue();
-  bar.innerHTML=
-    /* Month quick-filter */
-    '<label style="font-weight:600;font-size:13px;">Month</label>'+
-    '<input type="month" id="dashMonthFilter" value="'+cur+'"'+
-      ' style="padding:5px 8px;border-radius:6px;border:1px solid var(--border-color,#555);background:var(--input-bg,#1e1e2e);color:var(--text-primary,#fff);font-size:13px;"'+
-      ' onchange="onDashFilterChange()">'+
-
-    /* Divider */
-    '<span style="color:var(--text-secondary,#aaa);font-size:13px;padding:0 4px;">or date range</span>'+
-
-    /* Start date */
-    '<label style="font-weight:600;font-size:13px;">From</label>'+
-    '<input type="date" id="dashStartDate"'+
-      ' style="padding:5px 8px;border-radius:6px;border:1px solid var(--border-color,#555);background:var(--input-bg,#1e1e2e);color:var(--text-primary,#fff);font-size:13px;"'+
-      ' onchange="onDashFilterChange()">'+
-
-    /* End date */
-    '<label style="font-weight:600;font-size:13px;">To</label>'+
-    '<input type="date" id="dashEndDate"'+
-      ' style="padding:5px 8px;border-radius:6px;border:1px solid var(--border-color,#555);background:var(--input-bg,#1e1e2e);color:var(--text-primary,#fff);font-size:13px;"'+
-      ' onchange="onDashFilterChange()">'+
-
-    /* Clear button */
-    '<button onclick="clearDashFilters()"'+
-      ' style="padding:5px 12px;border-radius:6px;border:none;background:var(--accent-color,#6c63ff);color:#fff;font-size:13px;cursor:pointer;">Clear</button>';
-}
-
-/** Clears custom date range; keeps month filter on current month. */
-function clearDashFilters(){
-  var sd=document.getElementById('dashStartDate');
-  var ed=document.getElementById('dashEndDate');
-  if(sd)sd.value='';
-  if(ed)ed.value='';
-  var mf=document.getElementById('dashMonthFilter');
-  if(mf)mf.value=getCurrentMonthValue();
-  updateDashboard();
-}
-
-/** Called whenever any dashboard filter input changes. */
-function onDashFilterChange(){
-  /* When the user types into a date range, clear the month picker
-     so they don't accidentally apply both filters at once. */
-  var sd=document.getElementById('dashStartDate');
-  var ed=document.getElementById('dashEndDate');
-  var mf=document.getElementById('dashMonthFilter');
-  if(sd&&ed&&mf){
-    if((sd.value||ed.value)&&mf===document.activeElement){
-      /* Month picker was touched — clear date range */
-      sd.value='';ed.value='';
-    } else if(sd.value||ed.value){
-      /* Date range was touched — clear month picker */
-      mf.value='';
-    }
-  }
-  updateDashboard();
-}
-
-/**
- * Core filter: given a payroll record, return true if it falls
- * within the currently active dashboard filter.
- *
- * Priority:
- *   1. If dashStartDate or dashEndDate has a value  → use date range
- *   2. Else if dashMonthFilter has a value           → use month
- *   3. Else                                          → include everything
- */
-function empPassesDashFilter(emp){
-  var sd=document.getElementById('dashStartDate');
-  var ed=document.getElementById('dashEndDate');
-  var mf=document.getElementById('dashMonthFilter');
-
-  var startVal = sd ? sd.value : '';
-  var endVal   = ed ? ed.value : '';
-  var monthVal = mf ? mf.value : '';
-
-  /* ── Date-range mode ── */
-  if(startVal || endVal){
-    /* emp.date is stored as "YYYY-MM-DD" or similar */
-    var empDate = emp.date || emp.month;   /* fallback to month if date absent */
-    if(!empDate) return false;
-    /* Normalise: if empDate is "YYYY-MM" pad to first of month */
-    var normDate = empDate.length===7 ? empDate+'-01' : empDate;
-    if(startVal && normDate < startVal) return false;
-    if(endVal   && normDate > endVal  ) return false;
-    return true;
-  }
-
-  /* ── Month mode ── */
-  if(monthVal){
-    /* emp.month is "YYYY-MM"; emp.date is "YYYY-MM-DD" */
-    var empMonth = emp.month || (emp.date ? emp.date.substring(0,7) : '');
-    return empMonth === monthVal;
-  }
-
-  /* ── No filter — show all ── */
-  return true;
-}
-
-/* ══════════════════════════════════════════════════════════
-   DASHBOARD — MAIN UPDATE  (replaces the old updateDashboard)
-   ══════════════════════════════════════════════════════════ */
-function updateDashboard(){
-  /* Ensure the filter bar exists before reading values */
-  buildDashFilterBar();
-
-  /* ── Filter payrollResults ── */
-  var filtered = payrollResults.filter(empPassesDashFilter);
-
-  /* ── Recalculate totals from filtered set only ── */
-  var totalNet = 0, totalOT = 0, totalAdv = 0, empCount = 0;
-
-  filtered.forEach(function(emp){
-    var net  = parseFloat(emp.netPay  || emp.net  || 0);
-    var ot   = 0;
-    /* OT = normal OT amt + double OT amt */
-    var noth = parseFloat(emp.noth || 0);
-    var doth = parseFloat(emp.doth || 0);
-    var otr  = parseFloat(emp.otr  || 0);
-    var dotr = parseFloat(emp.dotr || 0);
-    ot = noth * otr + doth * dotr;
-    /* Also sum any earn-line labelled with OT just in case */
-    (emp.earns||[]).forEach(function(e){
-      if(e.lbl && /OT/i.test(e.lbl)) ot += parseFloat(e.val)||0;
-    });
-
-    /* Advances: look for a deduction line labelled "Advance" or "Salary Advance" */
-    var adv = 0;
-    (emp.deds||[]).forEach(function(d){
-      if(d.lbl && /advance/i.test(d.lbl)) adv += parseFloat(d.val)||0;
-    });
-
-    totalNet  += net;
-    totalOT   += ot;
-    totalAdv  += adv;
-    empCount++;
+  /* Gather selected employee objects */
+  var selectedEmps = [];
+  checked.forEach(function(cb) {
+    var row = cb.closest('.results-row');
+    var key = row.getAttribute('data-key');
+    var emp = payrollResults.find(function(e){ return e.rowId === key; });
+    if (emp) selectedEmps.push(emp);
   });
 
-  /* ── Push to DOM ── */
-  var elNet   = document.getElementById('dashTotalNet');
-  var elOT    = document.getElementById('dashTotalOT');
-  var elAdv   = document.getElementById('dashTotalAdv');
-  var elCount = document.getElementById('dashEmpCount');
+  /* ── Discover all unique allowance and deduction labels ── */
+  var allAllowLabels = [];
+  var allDedLabels   = [];
 
-  if(elNet)   elNet.textContent   = fmt(totalNet);
-  if(elOT)    elOT.textContent    = fmt(totalOT);
-  if(elAdv)   elAdv.textContent   = fmt(totalAdv);
-  if(elCount) elCount.textContent = empCount;
+  selectedEmps.forEach(function(emp) {
+    /* OT allowances that appear in earns */
+    var earns = emp.earns || [];
+    earns.forEach(function(e) {
+      if (e.lbl && allAllowLabels.indexOf(e.lbl) === -1) allAllowLabels.push(e.lbl);
+    });
+    var deds = emp.deds || [];
+    deds.forEach(function(d) {
+      if (d.lbl && allDedLabels.indexOf(d.lbl) === -1) allDedLabels.push(d.lbl);
+    });
+  });
 
-  /* ── Also update the month stats row + chart ── */
-  updateMonthStats();
-  buildMonthlyChart();
+  /* ── Build header row ── */
+  var fixedHeaders = [
+    'ID', 'Name', 'Bank Name', 'Branch', 'Account Number',
+    'Net Pay', 'Advance', 'OT Pay', 'Total Working Days',
+    '8% ETF (Employee EPF)', '12% EPF (Employer)', '3% EPF (ETF)',
+    'No-Pay Count'
+  ];
+
+  var allowHeaders = allAllowLabels.map(function(l){ return 'Allowance: ' + l; });
+  var dedHeaders   = allDedLabels.map(function(l){   return 'Deduction: ' + l; });
+  var otHeader     = ['OT Count (Hours)'];
+
+  var headerRow = fixedHeaders.concat(allowHeaders).concat(dedHeaders).concat(otHeader);
+
+  /* ── Build data rows ── */
+  var dataRows = selectedEmps.map(function(emp) {
+    var basic   = parseFloat(emp.basic)  || 0;
+    var nopay   = parseFloat(emp.nopay)  || 0;
+    var noth    = parseFloat(emp.noth)   || 0;
+    var doth    = parseFloat(emp.doth)   || 0;
+    var otr     = parseFloat(emp.otr)    || 0;
+    var dotr    = parseFloat(emp.dotr)   || 0;
+    var actd    = parseFloat(emp.actd)   || 0;
+    var casual  = (emp.emptype === 'Casual');
+
+    var nopayAmt = (basic / 30) * nopay;
+    var adjBasic = basic - nopayAmt;
+
+    var normalOTPay = noth * otr;
+    var doubleOTPay = doth * dotr;
+    var totalOTPay  = normalOTPay + doubleOTPay;
+    var totalOTHrs  = noth + doth;
+
+    var epf8  = casual ? 0 : adjBasic * 0.08;
+    var epf12 = casual ? 0 : adjBasic * 0.12;
+    var etf3  = casual ? 0 : adjBasic * 0.03;
+
+    /* Advance = sum of deduction items whose label contains "advance" */
+    var advance = 0;
+    (emp.deds || []).forEach(function(d) {
+      if ((d.lbl || '').toLowerCase().indexOf('advance') !== -1)
+        advance += parseFloat(d.val) || 0;
+    });
+
+    var netPay = parseFloat(emp.netPay) || 0;
+
+    /* Fixed columns */
+    var row = [
+      emp.id      || '',
+      emp.name    || '',
+      emp.bank    || '',
+      emp.branch  || '',
+      emp.acc     || '',
+      parseFloat(netPay.toFixed(2)),
+      parseFloat(advance.toFixed(2)),
+      parseFloat(totalOTPay.toFixed(2)),
+      actd,
+      parseFloat(epf8.toFixed(2)),
+      parseFloat(epf12.toFixed(2)),
+      parseFloat(etf3.toFixed(2)),
+      nopay
+    ];
+
+    /* Individual Allowance columns */
+    var earnMap = {};
+    (emp.earns || []).forEach(function(e){ earnMap[e.lbl] = parseFloat(e.val) || 0; });
+    allAllowLabels.forEach(function(lbl){
+      row.push(earnMap[lbl] !== undefined ? parseFloat((earnMap[lbl]).toFixed(2)) : 0);
+    });
+
+    /* Individual Deduction columns */
+    var dedMap = {};
+    (emp.deds || []).forEach(function(d){ dedMap[d.lbl] = parseFloat(d.val) || 0; });
+    allDedLabels.forEach(function(lbl){
+      row.push(dedMap[lbl] !== undefined ? parseFloat((dedMap[lbl]).toFixed(2)) : 0);
+    });
+
+    /* OT Count */
+    row.push(totalOTHrs);
+
+    return row;
+  });
+
+  /* ── Assemble workbook ── */
+  var wb  = XLSX.utils.book_new();
+  var aoa = [headerRow].concat(dataRows);
+  var ws  = XLSX.utils.aoa_to_sheet(aoa);
+
+  /* Auto column widths */
+  var colWidths = headerRow.map(function(h, ci) {
+    var maxLen = String(h).length + 2;
+    dataRows.forEach(function(r) {
+      var cellLen = String(r[ci] !== undefined ? r[ci] : '').length + 2;
+      if (cellLen > maxLen) maxLen = cellLen;
+    });
+    return {wch: Math.min(maxLen, 35)};
+  });
+  ws['!cols'] = colWidths;
+
+  XLSX.utils.book_append_sheet(wb, ws, "Payroll Detail");
+  XLSX.writeFile(wb, "Pavara_Payroll_Detailed_Export.xlsx");
 }
 
 /* ══════════════════════════════════════════════════════════
-   SALARY SLIP BUILDER
-   Side-by-side A4, 13pt base, iframe print engine
+   SALARY SLIP — BUILD DATA
    ══════════════════════════════════════════════════════════ */
-function buildSlipData(src,isDOM){
-  var name    = isDOM?src.querySelector('.e-name').value   :src.name;
-  var id      = isDOM?src.querySelector('.e-id').value     :src.id;
-  var dept    = isDOM?src.querySelector('.e-dept').value   :src.dept;
-  var desig   = isDOM?src.querySelector('.e-desig').value  :src.desig;
-  var roster  = isDOM?src.querySelector('.e-roster').value :src.roster;
-  var bank    = isDOM?src.querySelector('.e-bank').value   :src.bank;
-  var acc     = isDOM?src.querySelector('.e-acc').value    :src.acc;
-  var emptype = isDOM?src.querySelector('.e-emptype').value:(src.emptype||'Permanent');
-  var casual  = emptype==='Casual';
+function buildSlipData(src, isDOM) {
+  var name    = isDOM ? src.querySelector('.e-name').value   : src.name;
+  var id      = isDOM ? src.querySelector('.e-id').value     : src.id;
+  var dept    = isDOM ? src.querySelector('.e-dept').value   : src.dept;
+  var desig   = isDOM ? src.querySelector('.e-desig').value  : src.desig;
+  var roster  = isDOM ? src.querySelector('.e-roster').value : src.roster;
+  var bank    = isDOM ? src.querySelector('.e-bank').value   : src.bank;
+  var acc     = isDOM ? src.querySelector('.e-acc').value    : src.acc;
+  var emptype = isDOM ? src.querySelector('.e-emptype').value: (src.emptype||'Permanent');
+  var casual  = emptype === 'Casual';
 
-  var basic  = parseFloat(isDOM?src.querySelector('.e-basic').value:src.basic)||0;
-  var expd   = parseFloat(isDOM?src.querySelector('.e-expd').value :src.expd )||0;
-  var actd   = parseFloat(isDOM?src.querySelector('.e-actd').value :src.actd )||0;
-  var nopay  = parseFloat(isDOM?src.querySelector('.e-nopay').value:src.nopay)||0;
-  var otr    = parseFloat(isDOM?src.querySelector('.e-otr').value  :src.otr  )||0;
-  var dotr   = parseFloat(isDOM?src.querySelector('.e-dotr').value :src.dotr )||0;
-  var noth   = parseFloat(isDOM?src.querySelector('.e-noth').value :src.noth )||0;
-  var doth   = parseFloat(isDOM?src.querySelector('.e-doth').value :src.doth )||0;
+  var basic = parseFloat(isDOM?src.querySelector('.e-basic').value:src.basic)||0;
+  var expd  = parseFloat(isDOM?src.querySelector('.e-expd').value :src.expd )||0;
+  var actd  = parseFloat(isDOM?src.querySelector('.e-actd').value :src.actd )||0;
+  var nopay = parseFloat(isDOM?src.querySelector('.e-nopay').value:src.nopay)||0;
+  var otr   = parseFloat(isDOM?src.querySelector('.e-otr').value  :src.otr  )||0;
+  var dotr  = parseFloat(isDOM?src.querySelector('.e-dotr').value :src.dotr )||0;
+  var noth  = parseFloat(isDOM?src.querySelector('.e-noth').value :src.noth )||0;
+  var doth  = parseFloat(isDOM?src.querySelector('.e-doth').value :src.doth )||0;
 
-  var nopayAmt=basic/30*nopay,adjBasic=basic-nopayAmt;
-  var normalOT=noth*otr,doubleOT=doth*dotr;
+  var nopayAmt = basic/30*nopay, adjBasic = basic - nopayAmt;
+  var normalOT = noth*otr, doubleOT = doth*dotr;
 
-  var allowLines=[],totalAllow=normalOT+doubleOT;
-  if(normalOT>0)allowLines.push({lbl:'Normal OT Allowance',val:normalOT});
-  if(doubleOT>0)allowLines.push({lbl:'Double OT',val:doubleOT});
-  if(isDOM){
-    src.querySelectorAll('.earn_amt').forEach(function(a){var v=parseFloat(a.value)||0;if(v>0){totalAllow+=v;allowLines.push({lbl:a.parentElement.querySelector('select').value,val:v});}});
-  }else{
-    (src.earns||[]).forEach(function(e){var v=parseFloat(e.val)||0;if(v>0){totalAllow+=v;allowLines.push({lbl:e.lbl,val:v});}});
+  var allowLines = [], totalAllow = normalOT + doubleOT;
+  if (normalOT > 0) allowLines.push({lbl:'Normal OT Allowance',val:normalOT});
+  if (doubleOT > 0) allowLines.push({lbl:'Double OT',val:doubleOT});
+  if (isDOM) {
+    src.querySelectorAll('.earn_amt').forEach(function(a){
+      var v = parseFloat(a.value)||0;
+      if (v>0){ totalAllow+=v; allowLines.push({lbl:a.parentElement.querySelector('select').value,val:v}); }
+    });
+  } else {
+    (src.earns||[]).forEach(function(e){
+      var v = parseFloat(e.val)||0;
+      if (v>0){ totalAllow+=v; allowLines.push({lbl:e.lbl,val:v}); }
+    });
   }
 
-  var epf8=casual?0:adjBasic*0.08,epf12=casual?0:adjBasic*0.12,etf3=casual?0:adjBasic*0.03;
+  var epf8=casual?0:adjBasic*0.08, epf12=casual?0:adjBasic*0.12, etf3=casual?0:adjBasic*0.03;
 
-  var dedLines=[],totalDed=nopayAmt+epf8;
-  if(nopayAmt>0)dedLines.push({lbl:'No Pay Basic Deduction',val:nopayAmt});
-  if(!casual)dedLines.push({lbl:'EPF Employee',val:epf8});
-  if(isDOM){
-    src.querySelectorAll('.ded_amt').forEach(function(d){var v=parseFloat(d.value)||0;if(v>0){totalDed+=v;dedLines.push({lbl:d.parentElement.querySelector('select').value,val:v});}});
-  }else{
-    (src.deds||[]).forEach(function(d){var v=parseFloat(d.val)||0;if(v>0){totalDed+=v;dedLines.push({lbl:d.lbl,val:v});}});
+  var dedLines = [], totalDed = nopayAmt + epf8;
+  if (nopayAmt>0) dedLines.push({lbl:'No Pay Basic Deduction',val:nopayAmt});
+  if (!casual)    dedLines.push({lbl:'EPF Employee',val:epf8});
+  if (isDOM) {
+    src.querySelectorAll('.ded_amt').forEach(function(d){
+      var v = parseFloat(d.value)||0;
+      if (v>0){ totalDed+=v; dedLines.push({lbl:d.parentElement.querySelector('select').value,val:v}); }
+    });
+  } else {
+    (src.deds||[]).forEach(function(d){
+      var v = parseFloat(d.val)||0;
+      if (v>0){ totalDed+=v; dedLines.push({lbl:d.lbl,val:v}); }
+    });
   }
 
-  var grossPay=basic+totalAllow,netPay=adjBasic+totalAllow-totalDed,epfGross=epf8+epf12;
-  return{name:name,id:id,dept:dept,desig:desig,roster:roster,bank:bank,acc:acc,emptype:emptype,casual:casual,
-    basic:basic,expd:expd,actd:actd,nopay:nopay,noth:noth,doth:doth,
-    allowLines:allowLines,totalAllow:totalAllow,dedLines:dedLines,totalDed:totalDed,
-    grossPay:grossPay,netPay:netPay,epf8:epf8,epf12:epf12,etf3:etf3,epfGross:epfGross,
-    totalLeave:0,extraDays:Math.max(0,actd-expd)};
+  var grossPay = basic + totalAllow;
+  var netPay   = adjBasic + totalAllow - totalDed;
+  var epfGross = epf8 + epf12;
+
+  return {
+    name:name, id:id, dept:dept, desig:desig, roster:roster,
+    bank:bank, acc:acc, emptype:emptype, casual:casual,
+    basic:basic, expd:expd, actd:actd, nopay:nopay, noth:noth, doth:doth,
+    allowLines:allowLines, totalAllow:totalAllow,
+    dedLines:dedLines, totalDed:totalDed,
+    grossPay:grossPay, netPay:netPay,
+    epf8:epf8, epf12:epf12, etf3:etf3, epfGross:epfGross,
+    totalLeave:0, extraDays:Math.max(0, actd-expd)
+  };
 }
 
-function renderSlipHTML(d,monthYear){
-  var etCls=d.casual?'casual-type':'permanent-type';
-  var etTxt=d.casual?'CASUAL EMPLOYEE':'PERMANENT EMPLOYEE';
+/* ══════════════════════════════════════════════════════════
+   SALARY SLIP — RENDER HTML
+   ══════════════════════════════════════════════════════════ */
+function renderSlipHTML(d, monthYear) {
+  var etCls = d.casual ? 'casual-type' : 'permanent-type';
+  var etTxt = d.casual ? 'CASUAL EMPLOYEE' : 'PERMANENT EMPLOYEE';
 
-  var infoRows=
-    '<div class="info-row"><span class="info-lbl">EMP NO</span><span class="info-col">:</span><span class="info-val">'+escHtml(d.id||'')+'</span></div>'+
-    '<div class="info-row"><span class="info-lbl">NAME</span><span class="info-col">:</span><span class="info-val">'+escHtml(d.name||'')+'</span></div>'+
-    '<div class="info-row"><span class="info-lbl">ROSTER</span><span class="info-col">:</span><span class="info-val">'+escHtml(d.roster||'-')+'</span></div>'+
-    '<div class="info-row"><span class="info-lbl">DEPARTMENT</span><span class="info-col">:</span><span class="info-val">'+escHtml(d.dept||'-')+'</span></div>'+
-    '<div class="info-row"><span class="info-lbl">DESIGNATION</span><span class="info-col">:</span><span class="info-val">'+escHtml(d.desig||'-')+'</span></div>';
+  var infoRows =
+    '<div class="info-row"><span class="info-lbl">EMP NO</span>' +
+      '<span class="info-col">:</span><span class="info-val">' + escHtml(d.id||'') + '</span></div>' +
+    '<div class="info-row"><span class="info-lbl">NAME</span>' +
+      '<span class="info-col">:</span><span class="info-val">' + escHtml(d.name||'') + '</span></div>' +
+    '<div class="info-row"><span class="info-lbl">ROSTER</span>' +
+      '<span class="info-col">:</span><span class="info-val">' + escHtml(d.roster||'-') + '</span></div>' +
+    '<div class="info-row"><span class="info-lbl">DEPARTMENT</span>' +
+      '<span class="info-col">:</span><span class="info-val">' + escHtml(d.dept||'-') + '</span></div>' +
+    '<div class="info-row"><span class="info-lbl">DESIGNATION</span>' +
+      '<span class="info-col">:</span><span class="info-val">' + escHtml(d.desig||'-') + '</span></div>';
 
-  var allowHTML='';
-  d.allowLines.forEach(function(a){allowHTML+='<div class="line-item"><span class="li-label">'+escHtml(a.lbl)+'</span><span class="li-val">'+fmt(a.val)+'</span></div>';});
+  var allowHTML = '';
+  d.allowLines.forEach(function(a){
+    allowHTML += '<div class="line-item">' +
+      '<span class="li-label">' + escHtml(a.lbl) + '</span>' +
+      '<span class="li-val">' + fmt(a.val) + '</span></div>';
+  });
 
-  var dedHTML='';
-  d.dedLines.forEach(function(x){dedHTML+='<div class="line-item"><span class="li-label">'+escHtml(x.lbl)+'</span><span class="li-val">'+fmt(x.val)+'</span></div>';});
+  var dedHTML = '';
+  d.dedLines.forEach(function(x){
+    dedHTML += '<div class="line-item">' +
+      '<span class="li-label">' + escHtml(x.lbl) + '</span>' +
+      '<span class="li-val">' + fmt(x.val) + '</span></div>';
+  });
 
-  var epfSection=d.casual
-    ?'<div class="casual-notice">CASUAL EMPLOYEE — EPF / ETF NOT APPLICABLE</div>'
-    :'<div class="epf-section">'+
-       '<div class="epf-section-title">EMPLOYER CONTRIBUTIONS</div>'+
-       '<div class="epf-line"><span>EPF Employer (12%)</span><span>'+fmt(d.epf12)+'</span></div>'+
-       '<div class="epf-line"><span>ETF Employer (3%)</span><span>'+fmt(d.etf3)+'</span></div>'+
-       '<div class="epf-line"><span>EPF Gross Total</span><span>'+fmt(d.epfGross)+'</span></div>'+
-     '</div>';
+  var epfSection = d.casual
+    ? '<div class="casual-notice">CASUAL EMPLOYEE — EPF / ETF NOT APPLICABLE</div>'
+    : '<div class="epf-section">' +
+        '<div class="epf-section-title">EMPLOYER CONTRIBUTIONS</div>' +
+        '<div class="epf-line"><span>EPF Employer (12%)</span><span>' + fmt(d.epf12) + '</span></div>' +
+        '<div class="epf-line"><span>ETF Employer (3%)</span><span>'  + fmt(d.etf3)  + '</span></div>' +
+        '<div class="epf-line"><span>EPF Gross Total</span><span>'    + fmt(d.epfGross) + '</span></div>' +
+      '</div>';
 
-  var attSection=
-    '<div class="attendance-box">'+
-      '<div class="att-title">ATTENDANCE DETAILS</div>'+
-      '<div class="att-grid">'+
-        '<div class="att-item">Expected Days &nbsp;- '+d.expd+'</div>'+
-        '<div class="att-item">Actual Present Days - '+d.actd+'</div>'+
-        '<div class="att-item">No Pay Cut Days - '+d.nopay+'</div>'+
-        '<div class="att-item">Normal OT Hours - '+d.noth+'</div>'+
-        '<div class="att-item">Double OT Hours - '+d.doth+'</div>'+
-        '<div class="att-item">Extra Days Worked - '+d.extraDays+'</div>'+
-      '</div>'+
+  var attSection =
+    '<div class="attendance-box">' +
+      '<div class="att-title">ATTENDANCE DETAILS</div>' +
+      '<div class="att-grid">' +
+        '<div class="att-item">Expected Days &nbsp;- ' + d.expd + '</div>' +
+        '<div class="att-item">Actual Present Days - ' + d.actd + '</div>' +
+        '<div class="att-item">No Pay Cut Days - ' + d.nopay + '</div>' +
+        '<div class="att-item">Normal OT Hours - ' + d.noth + '</div>' +
+        '<div class="att-item">Double OT Hours - ' + d.doth + '</div>' +
+        '<div class="att-item">Extra Days Worked - ' + d.extraDays + '</div>' +
+      '</div>' +
     '</div>';
 
-  return '<div class="salary-slip">'+
-    '<div class="slip-header">'+
-      '<div class="co-name">PAVARA TRADERS AND SERVICES</div>'+
-      '<div class="slip-title">SALARY SLIP FOR '+monthYear+'</div>'+
-      '<div class="emp-type-line '+etCls+'">[ '+etTxt+' ]</div>'+
-    '</div>'+
-    '<div class="info-block">'+infoRows+'</div>'+
-    '<div class="basic-salary-row"><span>Basic Salary (Inclusive of B.R.A)</span><span>'+fmt(d.basic)+'</span></div>'+
-    '<div class="section-heading">ALLOWANCES</div>'+
-    allowHTML+
-    '<div class="subtotal-row"><span>Total Allowance</span><span>'+fmt(d.totalAllow)+'</span></div>'+
-    '<div class="gross-row"><span>Gross Pay</span><span>'+fmt(d.grossPay)+'</span></div>'+
-    '<div class="section-heading">DEDUCTIONS</div>'+
-    dedHTML+
-    '<div class="subtotal-row"><span>Total Deduction</span><span>'+fmt(d.totalDed)+'</span></div>'+
-    '<div class="net-pay-row"><span>Net Pay</span><span>'+fmt(d.netPay)+'</span></div>'+
-    epfSection+
-    '<div class="bank-box">Bank : '+escHtml(d.bank||'-')+'&nbsp;&nbsp;&nbsp;Bank AccNo: '+escHtml(d.acc||'-')+'</div>'+
-    attSection+
-  '</div>';
+  return (
+    '<div class="salary-slip">' +
+      '<div class="slip-header">' +
+        '<div class="co-name">PAVARA TRADERS AND SERVICES</div>' +
+        '<div class="slip-title">SALARY SLIP FOR ' + monthYear + '</div>' +
+        '<div class="emp-type-line ' + etCls + '">[ ' + etTxt + ' ]</div>' +
+      '</div>' +
+      '<div class="info-block">' + infoRows + '</div>' +
+      '<div class="basic-salary-row"><span>Basic Salary (Inclusive of B.R.A)</span>' +
+        '<span>' + fmt(d.basic) + '</span></div>' +
+      '<div class="section-heading">ALLOWANCES</div>' +
+      allowHTML +
+      '<div class="subtotal-row"><span>Total Allowance</span>' +
+        '<span>' + fmt(d.totalAllow) + '</span></div>' +
+      '<div class="gross-row"><span>Gross Pay</span>' +
+        '<span>' + fmt(d.grossPay) + '</span></div>' +
+      '<div class="section-heading">DEDUCTIONS</div>' +
+      dedHTML +
+      '<div class="subtotal-row"><span>Total Deduction</span>' +
+        '<span>' + fmt(d.totalDed) + '</span></div>' +
+      '<div class="net-pay-row"><span>Net Pay</span>' +
+        '<span>' + fmt(d.netPay) + '</span></div>' +
+      epfSection +
+      '<div class="bank-box">Bank : ' + escHtml(d.bank||'-') +
+        '&nbsp;&nbsp;&nbsp;Bank AccNo: ' + escHtml(d.acc||'-') + '</div>' +
+      attSection +
+    '</div>'
+  );
 }
 
-/* ── Print from Payroll page ── */
-function printSlips(){
-  var month=document.getElementById('globalMonth').value;
-  var monthYear=month?new Date(month+'-01').toLocaleDateString('en-US',{month:'long',year:'numeric'}).toUpperCase():'';
-  var cards=Array.from(document.querySelectorAll('.employee-card:not(.inactive)'));
-  if(cards.length===0){alert("No active employees.");return;}
-  var pages=[];
-  for(var p=0;p<Math.ceil(cards.length/2);p++){
-    var c1=cards[p*2],c2=cards[p*2+1]||null;
-    var d1=buildSlipData(c1,true);
-    var d2=c2?buildSlipData(c2,true):null;
-    pages.push({left:renderSlipHTML(d1,monthYear),right:d2?renderSlipHTML(d2,monthYear):''});
-  }
-  launchPrintIframe(pages);
-}
+/* ══════════════════════════════════════════════════════════
+   PRINT FROM PAYROLL PAGE
+   ══════════════════════════════════════════════════════════ */
+function printSlips() {
+  var month     = document.getElementById('globalMonth').value;
+  var monthYear = month
+    ? new Date(month + '-01').toLocaleDateString('en-US',
+        {month:'long',year:'numeric'}).toUpperCase()
+    : '';
+  var cards = Array.from(document.querySelectorAll('.employee-card:not(.inactive)'));
+  if (cards.length === 0) { alert("No active employees."); return; }
 
-/* ── Print from Final Results page ── */
-function printSelectedRows(){
-  var checked=document.querySelectorAll('#results-body .row-checkbox:checked');
-  if(checked.length===0)return alert("Please select at least one employee to print!");
-  var empsToPrint=[];
-  checked.forEach(function(cb){
-    var row=cb.closest('.results-row'),key=row.getAttribute('data-key');
-    var emp=payrollResults.find(function(e){return e.rowId===key;});
-    if(emp)empsToPrint.push(emp);
-  });
-  var pages=[];
-  for(var p=0;p<Math.ceil(empsToPrint.length/2);p++){
-    var e1=empsToPrint[p*2],e2=empsToPrint[p*2+1]||null;
-    var mRaw=e1.month||'',mYear=mRaw?new Date(mRaw+'-01').toLocaleDateString('en-US',{month:'long',year:'numeric'}).toUpperCase():'';
-    var d1=buildSlipData(e1,false);
-    var d2html='';
-    if(e2){
-      var mRaw2=e2.month||'',mYear2=mRaw2?new Date(mRaw2+'-01').toLocaleDateString('en-US',{month:'long',year:'numeric'}).toUpperCase():'';
-      d2html=renderSlipHTML(buildSlipData(e2,false),mYear2);
-    }
-    pages.push({left:renderSlipHTML(d1,mYear),right:d2html});
+  var pages = [];
+  for (var p = 0; p < Math.ceil(cards.length / 2); p++) {
+    var c1 = cards[p*2], c2 = cards[p*2+1] || null;
+    var d1 = buildSlipData(c1, true);
+    var d2 = c2 ? buildSlipData(c2, true) : null;
+    pages.push({
+      left:  renderSlipHTML(d1, monthYear),
+      right: d2 ? renderSlipHTML(d2, monthYear) : ''
+    });
   }
   launchPrintIframe(pages);
 }
 
 /* ══════════════════════════════════════════════════════════
-   IFRAME PRINT ENGINE — side-by-side A4, 13pt base font
+   PRINT FROM FINAL RESULTS PAGE
    ══════════════════════════════════════════════════════════ */
-function launchPrintIframe(pages){
-  var slipCSS=[
+function printSelectedRows() {
+  var checked = document.querySelectorAll('#results-body .row-checkbox:checked');
+  if (checked.length === 0) return alert("Please select at least one employee to print!");
+
+  var empsToPrint = [];
+  checked.forEach(function(cb) {
+    var row = cb.closest('.results-row'), key = row.getAttribute('data-key');
+    var emp = payrollResults.find(function(e){ return e.rowId === key; });
+    if (emp) empsToPrint.push(emp);
+  });
+
+  var pages = [];
+  for (var p = 0; p < Math.ceil(empsToPrint.length / 2); p++) {
+    var e1    = empsToPrint[p*2], e2 = empsToPrint[p*2+1] || null;
+    var mRaw  = e1.month || '';
+    var mYear = mRaw
+      ? new Date(mRaw+'-01').toLocaleDateString('en-US',
+          {month:'long',year:'numeric'}).toUpperCase()
+      : '';
+    var d1    = buildSlipData(e1, false);
+    var d2html = '';
+    if (e2) {
+      var mRaw2  = e2.month || '';
+      var mYear2 = mRaw2
+        ? new Date(mRaw2+'-01').toLocaleDateString('en-US',
+            {month:'long',year:'numeric'}).toUpperCase()
+        : '';
+      d2html = renderSlipHTML(buildSlipData(e2, false), mYear2);
+    }
+    pages.push({left: renderSlipHTML(d1, mYear), right: d2html});
+  }
+  launchPrintIframe(pages);
+}
+
+/* ══════════════════════════════════════════════════════════
+   IFRAME PRINT ENGINE — side-by-side A4
+   ══════════════════════════════════════════════════════════ */
+function launchPrintIframe(pages) {
+  var slipCSS = [
     '*{box-sizing:border-box;margin:0;padding:0;}',
     '@page{size:A4 portrait;margin:0;}',
     'html,body{width:210mm;background:white;}',
-    '.pg{width:210mm;height:297mm;display:flex;flex-direction:row;flex-wrap:nowrap;align-items:flex-start;justify-content:flex-start;padding:4mm 2.5mm;gap:2mm;page-break-after:always;break-after:page;background:white;overflow:hidden;}',
-    '.salary-slip{width:100mm;min-width:100mm;max-width:100mm;height:289mm;border:1.5px solid #000;padding:3.5mm 4mm;font-family:Arial,Helvetica,sans-serif;font-size:13pt;line-height:1.55;color:#000;overflow:hidden;flex-shrink:0;flex-grow:0;background:white;}',
+    '.pg{width:210mm;height:297mm;display:flex;flex-direction:row;flex-wrap:nowrap;' +
+      'align-items:flex-start;justify-content:flex-start;padding:4mm 2.5mm;gap:2mm;' +
+      'page-break-after:always;break-after:page;background:white;overflow:hidden;}',
+    '.salary-slip{width:100mm;min-width:100mm;max-width:100mm;height:289mm;' +
+      'border:1.5px solid #000;padding:3.5mm 4mm;font-family:Arial,Helvetica,sans-serif;' +
+      'font-size:13pt;line-height:1.55;color:#000;overflow:hidden;' +
+      'flex-shrink:0;flex-grow:0;background:white;}',
     '.slip-spacer{width:1mm;flex-shrink:0;}',
-    '.slip-header{text-align:center;border-bottom:2px solid #000;padding-bottom:3mm;margin-bottom:3.5mm;}',
-    '.co-name{font-size:11pt;font-weight:bold;line-height:1.3;letter-spacing:.02em;margin-bottom:1.5mm;}',
+    '.slip-header{text-align:center;border-bottom:2px solid #000;' +
+      'padding-bottom:3mm;margin-bottom:3.5mm;}',
+    '.co-name{font-size:11pt;font-weight:bold;line-height:1.3;' +
+      'letter-spacing:.02em;margin-bottom:1.5mm;}',
     '.slip-title{font-size:9pt;font-weight:bold;margin:2mm 0 1.5mm;letter-spacing:.03em;}',
     '.emp-type-line{font-size:8pt;font-style:italic;font-weight:bold;margin-top:1mm;}',
     '.casual-type{color:#b45309;}.permanent-type{color:#065f46;}',
@@ -1599,143 +2361,185 @@ function launchPrintIframe(pages){
     '.info-lbl{font-weight:bold;width:28mm;flex-shrink:0;}',
     '.info-col{width:4mm;flex-shrink:0;}',
     '.info-val{flex:1;}',
-    '.basic-salary-row{display:flex;justify-content:space-between;font-size:9pt;font-weight:bold;padding:2mm 1mm;border-top:1.5px dashed #555;border-bottom:1.5px dashed #555;margin-bottom:2mm;}',
-    '.section-heading{font-size:8.5pt;font-weight:bold;font-style:italic;text-decoration:underline;margin:2.5mm 0 1.5mm;letter-spacing:.03em;}',
-    '.line-item{display:flex;justify-content:space-between;font-size:8.5pt;padding:1mm 1mm;line-height:1.5;}',
+    '.basic-salary-row{display:flex;justify-content:space-between;font-size:9pt;' +
+      'font-weight:bold;padding:2mm 1mm;border-top:1.5px dashed #555;' +
+      'border-bottom:1.5px dashed #555;margin-bottom:2mm;}',
+    '.section-heading{font-size:8.5pt;font-weight:bold;font-style:italic;' +
+      'text-decoration:underline;margin:2.5mm 0 1.5mm;letter-spacing:.03em;}',
+    '.line-item{display:flex;justify-content:space-between;font-size:8.5pt;' +
+      'padding:1mm 1mm;line-height:1.5;}',
     '.li-label{flex:1;}.li-val{text-align:right;min-width:18mm;}',
-    '.subtotal-row{display:flex;justify-content:space-between;font-size:9pt;font-weight:bold;padding:1.5mm 1mm;border-top:1.5px dashed #555;margin-top:1mm;}',
-    '.gross-row{display:flex;justify-content:space-between;font-size:9pt;font-weight:bold;padding:2mm 1mm;border-top:2px solid #000;border-bottom:1.5px dashed #555;margin:2mm 0;}',
-    '.net-pay-row{display:flex;justify-content:space-between;font-size:11pt;font-weight:bold;padding:2.5mm 1mm;border-top:2.5px solid #000;border-bottom:2.5px solid #000;margin:2mm 0;}',
+    '.subtotal-row{display:flex;justify-content:space-between;font-size:9pt;' +
+      'font-weight:bold;padding:1.5mm 1mm;border-top:1.5px dashed #555;margin-top:1mm;}',
+    '.gross-row{display:flex;justify-content:space-between;font-size:9pt;' +
+      'font-weight:bold;padding:2mm 1mm;border-top:2px solid #000;' +
+      'border-bottom:1.5px dashed #555;margin:2mm 0;}',
+    '.net-pay-row{display:flex;justify-content:space-between;font-size:11pt;' +
+      'font-weight:bold;padding:2.5mm 1mm;border-top:2.5px solid #000;' +
+      'border-bottom:2.5px solid #000;margin:2mm 0;}',
     '.epf-section{border:1px solid #555;padding:2mm 2.5mm;margin:2mm 0;}',
     '.epf-section-title{font-size:8.5pt;font-weight:bold;margin-bottom:1mm;text-decoration:underline;}',
     '.epf-line{display:flex;justify-content:space-between;font-size:8.5pt;line-height:1.6;}',
-    '.casual-notice{border:1px solid #555;padding:2mm 2.5mm;margin:2mm 0;font-size:8.5pt;font-weight:bold;font-style:italic;text-align:center;line-height:1.5;}',
-    '.bank-box{border:1px solid #333;padding:2mm 2.5mm;margin:2mm 0;font-size:8.5pt;font-style:italic;text-align:center;line-height:1.6;}',
+    '.casual-notice{border:1px solid #555;padding:2mm 2.5mm;margin:2mm 0;' +
+      'font-size:8.5pt;font-weight:bold;font-style:italic;text-align:center;line-height:1.5;}',
+    '.bank-box{border:1px solid #333;padding:2mm 2.5mm;margin:2mm 0;' +
+      'font-size:8.5pt;font-style:italic;text-align:center;line-height:1.6;}',
     '.attendance-box{border:1px solid #333;padding:2mm 2.5mm;margin-top:2mm;}',
-    '.att-title{font-weight:bold;font-size:8.5pt;margin-bottom:1.5mm;text-decoration:underline;letter-spacing:.02em;}',
+    '.att-title{font-weight:bold;font-size:8.5pt;margin-bottom:1.5mm;' +
+      'text-decoration:underline;letter-spacing:.02em;}',
     '.att-grid{display:grid;grid-template-columns:1fr 1fr;gap:1mm 2mm;}',
     '.att-item{font-size:8.5pt;line-height:1.6;}'
   ].join('\n');
 
-  var pagesHTML=pages.map(function(pg){
-    return '<div class="pg">'+pg.left+(pg.right?'<div class="slip-spacer"></div>'+pg.right:'')+'</div>';
+  var pagesHTML = pages.map(function(pg) {
+    return '<div class="pg">' + pg.left +
+      (pg.right ? '<div class="slip-spacer"></div>' + pg.right : '') +
+      '</div>';
   }).join('\n');
 
-  var fullDoc='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>'+slipCSS+'</style></head><body>'+pagesHTML+'</body></html>';
+  var fullDoc = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+    '<style>' + slipCSS + '</style></head><body>' + pagesHTML + '</body></html>';
 
-  var iframe=document.createElement('iframe');
-  iframe.style.cssText='position:fixed;top:-9999px;left:-9999px;width:210mm;height:297mm;border:none;';
+  var iframe = document.createElement('iframe');
+  iframe.style.cssText =
+    'position:fixed;top:-9999px;left:-9999px;width:210mm;height:297mm;border:none;';
   document.body.appendChild(iframe);
-  var idoc=iframe.contentDocument||iframe.contentWindow.document;
-  idoc.open();idoc.write(fullDoc);idoc.close();
 
-  iframe.onload=function(){
-    setTimeout(function(){
+  var idoc = iframe.contentDocument || iframe.contentWindow.document;
+  idoc.open(); idoc.write(fullDoc); idoc.close();
+
+  iframe.onload = function() {
+    setTimeout(function() {
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
-      setTimeout(function(){if(iframe.parentNode)document.body.removeChild(iframe);},2000);
-    },400);
+      setTimeout(function(){
+        if (iframe.parentNode) document.body.removeChild(iframe);
+      }, 2000);
+    }, 400);
   };
-  setTimeout(function(){
-    if(iframe.parentNode){
+  setTimeout(function() {
+    if (iframe.parentNode) {
       iframe.contentWindow.focus();
       iframe.contentWindow.print();
-      setTimeout(function(){if(iframe.parentNode)document.body.removeChild(iframe);},2000);
+      setTimeout(function(){
+        if (iframe.parentNode) document.body.removeChild(iframe);
+      }, 2000);
     }
-  },1200);
+  }, 1200);
 }
 
 /* ══════════════════════════════════════════════════════════
    USERS PAGE
    ══════════════════════════════════════════════════════════ */
-function renderUserList(){
-  var c=document.getElementById('user-list-display'),em=document.getElementById('user-empty-msg');
-  if(!c)return;c.innerHTML='';
-  if(systemUsers.length===0){em.style.display='block';return;}
-  em.style.display='none';
-  systemUsers.forEach(function(u,idx){
-    var isAdmin=(u.u===DEFAULT_USER),role=u.role||'User',bc=role.toLowerCase()==='admin'?'admin':'user';
-    var row=document.createElement('div');row.className='user-table-row';
-    row.innerHTML=
-      '<div><div class="user-row-num">'+(idx+1)+'</div></div>'+
-      '<div style="font-weight:600;">'+escHtml(u.u)+'</div>'+
-      '<div><span class="user-role-badge '+bc+'">'+escHtml(role)+'</span></div>'+
-      '<div class="row-actions">'+
-        '<button class="btn-small btn-plus" onclick="editUser(\''+u.key+'\')">✏️ Edit</button>'+
-        (!isAdmin?'<button class="btn-small btn-rem" onclick="deleteUser(\''+u.key+'\',\''+escHtml(u.u)+'\')">🗑️ Delete</button>':'<span style="font-size:11px;color:var(--text-secondary);padding:4px 8px;">Protected</span>')+
+function renderUserList() {
+  var c  = document.getElementById('user-list-display');
+  var em = document.getElementById('user-empty-msg');
+  if (!c) return;
+  c.innerHTML = '';
+  if (systemUsers.length === 0) { em.style.display = 'block'; return; }
+  em.style.display = 'none';
+  systemUsers.forEach(function(u, idx) {
+    var isAdmin = (u.u === DEFAULT_USER);
+    var role    = u.role || 'User';
+    var bc      = role.toLowerCase() === 'admin' ? 'admin' : 'user';
+    var row     = document.createElement('div');
+    row.className = 'user-table-row';
+    row.innerHTML =
+      '<div><div class="user-row-num">' + (idx+1) + '</div></div>' +
+      '<div style="font-weight:600;">' + escHtml(u.u) + '</div>' +
+      '<div><span class="user-role-badge ' + bc + '">' + escHtml(role) + '</span></div>' +
+      '<div class="row-actions">' +
+        '<button class="btn-small btn-plus" onclick="editUser(\'' + u.key + '\')">✏️ Edit</button>' +
+        (!isAdmin
+          ? '<button class="btn-small btn-rem" onclick="deleteUser(\'' + u.key + '\',\'' +
+              escHtml(u.u) + '\')">🗑️ Delete</button>'
+          : '<span style="font-size:11px;color:var(--text-secondary);padding:4px 8px;">Protected</span>') +
       '</div>';
     c.appendChild(row);
   });
 }
-function submitUserAction(){
-  var u=document.getElementById('new_u').value.trim(),p=document.getElementById('new_p').value.trim();
-  var role=document.getElementById('new_role').value,k=document.getElementById('edit_user_key').value;
-  if(!u)return alert("Username required.");
-  if(!p)return alert("Password required.");
-  if(k){db.ref('system_users/'+k).update({u:u,p:p,role:role});alert("Updated!");}
-  else{
-    var ex=systemUsers.some(function(x){return x.u===u;});
-    if(ex)return alert("Username exists!");
-    db.ref('system_users').push({u:u,p:p,role:role});alert("Added!");
+function submitUserAction() {
+  var u    = document.getElementById('new_u').value.trim();
+  var p    = document.getElementById('new_p').value.trim();
+  var role = document.getElementById('new_role').value;
+  var k    = document.getElementById('edit_user_key').value;
+  if (!u) return alert("Username required.");
+  if (!p) return alert("Password required.");
+  if (k) {
+    db.ref('system_users/' + k).update({u:u, p:p, role:role});
+    alert("Updated!");
+  } else {
+    var ex = systemUsers.some(function(x){ return x.u === u; });
+    if (ex) return alert("Username exists!");
+    db.ref('system_users').push({u:u, p:p, role:role});
+    alert("Added!");
   }
   clearUserForm();
 }
-function editUser(k){
-  var u=systemUsers.find(function(x){return x.key===k;});if(!u)return;
-  document.getElementById('new_u').value=u.u;
-  document.getElementById('new_p').value='';
-  document.getElementById('new_role').value=u.role||'User';
-  document.getElementById('edit_user_key').value=k;
-  document.getElementById('btn-user-submit').innerText='💾 Update User';
-  document.getElementById('btn-user-cancel').style.display='block';
-  document.getElementById('user-form-heading').textContent='✏️ Edit User';
+function editUser(k) {
+  var u = systemUsers.find(function(x){ return x.key === k; });
+  if (!u) return;
+  document.getElementById('new_u').value        = u.u;
+  document.getElementById('new_p').value        = '';
+  document.getElementById('new_role').value     = u.role || 'User';
+  document.getElementById('edit_user_key').value= k;
+  document.getElementById('btn-user-submit').innerText = '💾 Update User';
+  document.getElementById('btn-user-cancel').style.display = 'block';
+  document.getElementById('user-form-heading').textContent = '✏️ Edit User';
 }
-function deleteUser(k,un){if(confirm('Delete "'+un+'"?'))db.ref('system_users/'+k).remove();}
-function clearUserForm(){
-  document.getElementById('new_u').value='';
-  document.getElementById('new_p').value='';
-  document.getElementById('new_role').value='User';
-  document.getElementById('edit_user_key').value='';
-  document.getElementById('btn-user-submit').textContent='Add User';
-  document.getElementById('btn-user-cancel').style.display='none';
-  document.getElementById('user-form-heading').textContent='➕ Add New User';
+function deleteUser(k, un) {
+  if (confirm('Delete "' + un + '"?')) db.ref('system_users/' + k).remove();
+}
+function clearUserForm() {
+  document.getElementById('new_u').value         = '';
+  document.getElementById('new_p').value         = '';
+  document.getElementById('new_role').value      = 'User';
+  document.getElementById('edit_user_key').value = '';
+  document.getElementById('btn-user-submit').textContent     = 'Add User';
+  document.getElementById('btn-user-cancel').style.display   = 'none';
+  document.getElementById('user-form-heading').textContent   = '➕ Add New User';
 }
 
 /* ══════════════════════════════════════════════════════════
    NAVIGATION
    ══════════════════════════════════════════════════════════ */
-function changePage(p){
-  document.querySelectorAll('.page-section').forEach(function(s){s.classList.add('hidden');});
-  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
-  document.getElementById('page-'+p).classList.remove('hidden');
-  document.getElementById('nav-'+p).classList.add('active');
-  if(p==='payroll'&&currentEditId===null)renderEmployees();
-  if(p==='results')renderFinalResults();
-  if(p==='users')clearUserForm();
-  /* Rebuild chart colours when switching back to payroll (theme may have changed) */
-  if(p==='payroll')buildMonthlyChart();
-  /* Build filter bar and refresh totals whenever dashboard is opened */
-  if(p==='dashboard'){buildDashFilterBar();updateDashboard();}
+function changePage(p) {
+  document.querySelectorAll('.page-section').forEach(function(s){
+    s.classList.add('hidden');
+  });
+  document.querySelectorAll('.nav-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
+  document.getElementById('page-' + p).classList.remove('hidden');
+  document.getElementById('nav-'  + p).classList.add('active');
+
+  if (p === 'payroll' && currentEditId === null) renderEmployees();
+  if (p === 'results') { renderFinalResults(); updateResultsSummaryBar(); }
+  if (p === 'users')   clearUserForm();
+  if (p === 'payroll') buildMonthlyChart();
 }
 
 /* ══════════════════════════════════════════════════════════
    THEME
    ══════════════════════════════════════════════════════════ */
-function initTheme(){
-  var t=localStorage.getItem('theme')||'dark';
-  document.documentElement.setAttribute('data-theme',t);
-  var sw=document.getElementById('themeSwitchInput');if(sw)sw.checked=(t==='dark');
+function initTheme() {
+  var t  = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  var sw = document.getElementById('themeSwitchInput');
+  if (sw) sw.checked = (t === 'dark');
 }
-function toggleTheme(){
-  var isDark=document.getElementById('themeSwitchInput').checked;
-  var t=isDark?'dark':'light';
-  document.documentElement.setAttribute('data-theme',t);
-  localStorage.setItem('theme',t);
-  /* Rebuild chart so colours match the new theme */
+function toggleTheme() {
+  var isDark = document.getElementById('themeSwitchInput').checked;
+  var t      = isDark ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('theme', t);
   buildMonthlyChart();
 }
-function openSettings(){document.getElementById('settingsModal').classList.add('active');}
-function closeSettings(e){if(!e||e.target===document.getElementById('settingsModal'))document.getElementById('settingsModal').classList.remove('active');}
+function openSettings()  { document.getElementById('settingsModal').classList.add('active'); }
+function closeSettings(e) {
+  if (!e || e.target === document.getElementById('settingsModal'))
+    document.getElementById('settingsModal').classList.remove('active');
+}
 </script>
 </body>
 </html>
